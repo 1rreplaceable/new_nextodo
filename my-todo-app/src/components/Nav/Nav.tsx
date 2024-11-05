@@ -2,8 +2,12 @@
 type NavProps = {
     isLoggedIn: boolean;
     userName: string;
-}
-const Nav = ({ isLoggedIn, userName } : NavProps) => {
+    onLoginClick: () => void;
+    onSignUpClick: () => void;
+    onLogoutClick: () => void;
+};
+
+const Nav = ({ isLoggedIn, userName, onLoginClick, onSignUpClick, onLogoutClick }: NavProps) => {
     return (
         <nav className="flex justify-between items-center p-4 bg-white shadow-md">
             <h1 className="text-4xl text-blue-500 font-bold">Nextodo</h1>
@@ -11,17 +15,18 @@ const Nav = ({ isLoggedIn, userName } : NavProps) => {
             <ul className="flex items-center space-x-4">
                 {isLoggedIn ? (
                     <>
-                        <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
-                            {userName?.charAt(0).toUpperCase()}
+                        <div className="w-10 h-10 rounded-full bg-gray-400 text-xl flex items-center justify-center text-white font-bold">
+                            {userName.charAt(0).toUpperCase()}
                         </div>
                         <li className="font-medium text-gray-700">{userName}</li>
+                        <button onClick={onLogoutClick} className="ml-4 text-red-500 hover:underline">Logout</button>
                     </>
                 ) : (
                     <>
-                        <li className="font-medium text-blue-500">Login</li>
-                        <li className="font-medium text-blue-500">Signup</li>
+                        <button className="mr-4" onClick={onLoginClick}>Login</button>
+                        <button onClick={onSignUpClick}>Sign Up</button>
                     </>
-                    )}
+                )}
             </ul>
         </nav>
     );

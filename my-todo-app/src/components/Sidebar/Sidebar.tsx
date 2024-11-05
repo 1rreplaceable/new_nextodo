@@ -57,10 +57,9 @@ const Sidebar = ({setSelectedView} : SidebarProps) => {
                     </button>
                 </li>
             </ul>
-
             {/* 친구 목록 섹션 */}
             <div className="mt-8">
-                <h3 className="text-lg font-semibold text-gray-600 mb-4">친구 목록</h3>
+                <h3 className="text-sm font-semibold text-gray-600 mb-4">그룹</h3>
                 <ul className="space-y-4">
                     {friends.map((friend) => (
                         <li key={friend.id}>
