@@ -1,5 +1,5 @@
 // src/components/Auth/Login.tsx
-import React, { useState } from "react";
+import React, {useState} from "react";
 
 type LoginProps = {
     onLogin: (userEmail: string, userPassword: string) => void;
