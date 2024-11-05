@@ -6,19 +6,22 @@ type SignUpProps = {
 };
 
 const SignUp = ({ onSignUp }: SignUpProps) => {
-    const URL = "localhost:8081/nextodo/signup";
+    const URL = "http://localhost:8081/nextodo/signup";
     const [userEmail, setUserEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const [userName, setUserName] = useState("");
+    const [userPassword, setUserPassword] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         fetch(URL,{
             method:'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                 userEmail: userEmail,
-                username: username,
-                password: password,
+                userName: userName,
+                userPassword: userPassword,
             }),
         }).then(res => res.json());
         //alert("회원가입이 완료되었습니다.");
@@ -37,15 +40,15 @@ const SignUp = ({ onSignUp }: SignUpProps) => {
             <input
                 type="password"
                 placeholder="비밀번호"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={userPassword}
+                onChange={(e) => setUserPassword(e.target.value)}
                 className="w-full p-2 border rounded-md"
             />
             <input
                 type="text"
                 placeholder="닉네임"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
                 className="w-full p-2 border rounded-md"
             />
             <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
