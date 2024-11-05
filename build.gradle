@@ -26,11 +26,17 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j:8.0.33'  // 명시적 버전 추가
+	runtimeOnly 'com.mysql:mysql-connector-j:8.0.33'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//javax.persistence 추가
+	implementation 'javax.persistence:javax.persistence-api:2.2'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 
