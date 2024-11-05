@@ -6,8 +6,8 @@ type SignUpProps = {
 };
 
 const SignUp = ({ onSignUp }: SignUpProps) => {
-    const URL = "";
-    const [userId, setUserId] = useState("");
+    const URL = "localhost:8081/nextodo/signup";
+    const [userEmail, setUserEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
@@ -16,7 +16,7 @@ const SignUp = ({ onSignUp }: SignUpProps) => {
         fetch(URL,{
             method:'POST',
             body: JSON.stringify({
-                userId: userId,
+                userEmail: userEmail,
                 username: username,
                 password: password,
             }),
@@ -29,9 +29,9 @@ const SignUp = ({ onSignUp }: SignUpProps) => {
         <form onSubmit={handleSubmit} className="space-y-4">
             <input
                 type="text"
-                placeholder="아이디"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
+                placeholder="이메일"
+                value={userEmail}
+                onChange={(e) => setUserEmail(e.target.value)}
                 className="w-full p-2 border rounded-md"
             />
             <input

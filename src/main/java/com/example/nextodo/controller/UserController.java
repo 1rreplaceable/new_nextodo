@@ -6,13 +6,12 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
     //기본페이지 요청
@@ -30,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping("/nextodo/signup")//회원가입 페이지 입력 정보 출력
-    public String signup(@ModelAttribute UserDTO userDTO){
+    public String signup(@RequestBody UserDTO userDTO){
         log.info("UserController signup");
         log.info("userDTO = " + userDTO);
         userService.signup(userDTO);
@@ -44,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/nextodo/login")//로그인
-    public String login(@ModelAttribute UserDTO userDTO, HttpSession session){
+    public String login(@RequestBody UserDTO userDTO, HttpSession session){
         log.info("UserController login");
         log.info("userDTO = " + userDTO);
         UserDTO loginResult = userService.login(userDTO);
