@@ -24,38 +24,41 @@ const SignUp = ({ onSignUp }: SignUpProps) => {
                 userPassword: userPassword,
             }),
         }).then(res => res.json());
-        //alert("회원가입이 완료되었습니다.");
+        alert("회원가입이 완료되었습니다.");
         onSignUp();
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-                type="text"
-                placeholder="이메일"
-                value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
-                className="w-full p-2 border rounded-md"
-            />
-            <input
-                type="password"
-                placeholder="비밀번호"
-                value={userPassword}
-                onChange={(e) => setUserPassword(e.target.value)}
-                className="w-full p-2 border rounded-md"
-            />
-            <input
-                type="text"
-                placeholder="닉네임"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                className="w-full p-2 border rounded-md"
-            />
-            <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                회원가입
-            </button>
-        </form>
+        <div className="flex items-center flex-col">
+            <div className="mb-10 font-bold text-3xl">Sign Up</div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <input
+                    type="text"
+                    placeholder="이메일"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    className="w-full p-2 border rounded-md"
+                />
+                <input
+                    type="password"
+                    placeholder="비밀번호"
+                    value={userPassword}
+                    onChange={(e) => setUserPassword(e.target.value)}
+                    className="w-full p-2 border rounded-md"
+                />
+                <input
+                    type="text"
+                    placeholder="닉네임"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    className="w-full p-2 border rounded-md"
+                />
+                <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
+                    회원가입
+                </button>
+            </form>
+        </div>
     );
 };
 
-export default SignUp;
+            export default SignUp;

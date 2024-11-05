@@ -5,7 +5,6 @@ type Todo = {
     id: number;
     title: string;
     completed: boolean;
-    priority: string;
     startDate: string;
     endDate: string;
 }
@@ -27,15 +26,36 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
     const [selectedTodos, setSelectedTodos] = useState<number[]>([]);
     const [comments, setComments] = useState<Comment[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [title, setTitle] = useState("");
     const today = new Date().toISOString().split("T")[0];
-
+    const [startDate, setStartDate] = useState(today);
+    const [endDate, setEndDate] = useState(today);
+    useEffect(() => {
+        fetch(`http://localhost:8081/nextodo/todos?userId=${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error("일정을 불러오는 데 실패했습니다.");
+                }
+                return res.json();
+            })
+            .then((data) => {
+                setTodos(data);
+            })
+            .catch((error) => {
+                console.error("데이터 불러오기 에러:", error);
+            });
+    }, [userId, selectedView]);
     // 샘플 데이터
     useEffect(() => {
         const sampleTodos: Todo[] = [
-            { id: 1, title: "아침에 운동하기", completed: false, priority: "상", startDate: "2024-11-03", endDate: "2024-11-10" },
-            { id: 2, title: "저녁에 밥먹기", completed: true, priority: "하", startDate: "2024-11-02", endDate: "2024-11-06" },
-            { id: 3, title: "보고서 작성하기", completed: false, priority: "중", startDate: "2024-11-05", endDate: "2024-11-05" },
+            { id: 1, title: "아침에 운동하기", completed: false, startDate: "2024-11-03", endDate: "2024-11-10" },
+            { id: 2, title: "저녁에 밥먹기", completed: true, startDate: "2024-11-02", endDate: "2024-11-06" },
+            { id: 3, title: "보고서 작성하기", completed: false, startDate: "2024-11-05", endDate: "2024-11-05" },
         ];
         setTodos(sampleTodos);
     }, [selectedView]);
@@ -43,10 +63,22 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
     const openModal = (todo: Todo) => {
         setSelectedTodo(todo);
         setIsModalOpen(true);
+        // 댓글 샘플데이터
         const sampleComments: Comment[] = [
             { id: 1, text: "굿!", author: "Stijn" },
             { id: 2, text: "별로", author: "Alice" },
         ];
+        useEffect(()=>{
+            fetch(`http://localhost:8081/nextodo/todoId=${todo.id}`)
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new Error("댓글 목록을 불러오는 데 실패했습니다.");
+                    }
+                    return res.json();
+                })
+                .then((data) => setComments(data))
+                .catch((error) => console.error("Error fetching members:", error));
+            }, []);
         setComments(sampleComments);
     };
 
@@ -82,7 +114,7 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
                 selectedTodos.includes(todo.id) ? { ...todo, completed: true } : todo
             )
         );
-        setSelectedTodos([]); // 선택 초기화
+        setSelectedTodos([]);
     };
 
     return (
@@ -114,7 +146,6 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
 
             {selectedView === "Today" && (
                 <>
-                    {selectedFriend}
                     <h1 className="text-2xl font-bold mb-4">오늘 할 일</h1>
                     <ul className="space-y-2">
                         {todos
@@ -135,54 +166,89 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
                                 </li>
                             ))}
                     </ul>
-                    <div className="pt-4 flex justify-end">
-                        <button
-                            className="space-y-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            onClick={handleComplete}
-                        >
-                    완료
-                    </button>
-                    </div>
+                    {todos.length > 0 && (
+                        <div className="pt-4 flex justify-end">
+                            <button
+                                className="space-y-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                                onClick={handleComplete}
+                            >
+                                완료
+                            </button>
+                        </div>
+                    )}
                 </>
             )}
 
             {selectedView === "AddTask" && (
                 <>
-                        <h1 className="text-2xl font-bold mb-4">일정 추가하기</h1>
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                // 일정 추가 로직 구현
-                                alert("일정이 추가되었습니다!");
-                            }}
-                            className="space-y-4"
-                        >
-                            <input
-                                type="text"
-                                placeholder="할 일 제목"
-                                className="w-full p-2 border rounded-md"
-                            />
-                            <input
-                                type="date"
-                                defaultValue={today} // 시작일 기본값
-                                className="w-full p-2 border rounded-md"
-                            />
-                            <input
-                                type="date"
-                                defaultValue={today} // 종료일 기본값
-                                className="w-full p-2 border rounded-md"
-                            />
-                            <div className="w-full justify-end flex">
-                                <button
-                                    type="submit"
-                                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                                >
-                                    일정 추가
-                                </button>
-                            </div>
-                        </form>
-                    </>
+                    <h1 className="text-2xl font-bold mb-4">일정 추가하기</h1>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            fetch("http://localhost:8081/nextodo/todos/add", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    id: userId,
+                                    complete: false,
+                                    title: title,
+                                    startDate: startDate,
+                                    endDate: endDate,
+                                }),
+                            })
+                                .then((res) => {
+                                    if (!res.ok) {
+                                        throw new Error("일정 추가에 실패했습니다.");
+                                    }
+                                    return res.json();
+                                })
+                                .then((newTodo) => {
+                                    setTodos((prevTodos) => [...prevTodos, newTodo]); // 새로운 일정 추가
+                                    alert("일정이 추가되었습니다!");
+                                    setTitle("");
+                                    setStartDate(today);
+                                    setEndDate(today);
+                                })
+                                .catch((error) => {
+                                    console.error("일정 추가 오류:", error);
+                                    alert("일정 추가에 실패했습니다.");
+                                });
+                        }}
+                        className="space-y-4"
+                    >
+                        <input
+                            type="text"
+                            placeholder="할 일 제목"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full p-2 border rounded-md"
+                        />
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="w-full p-2 border rounded-md"
+                        />
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="w-full p-2 border rounded-md"
+                        />
+                        <div className="w-full justify-end flex">
+                            <button
+                                type="submit"
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                            >
+                                일정 추가
+                            </button>
+                        </div>
+                    </form>
+                </>
             )}
+
 
             {selectedView === "Completed" && (
                 <>
@@ -218,7 +284,6 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
                             </button>
                             <h2 className="text-xl font-bold mb-4">{selectedTodo.title}</h2>
                             <p><strong>완료 여부:</strong> {getStatusLabel(selectedTodo)}</p>
-                            <p><strong>우선순위:</strong> {selectedTodo.priority || "없음"}</p>
                             <p><strong>시작일:</strong> {selectedTodo.startDate || "미정"}</p>
                             <p><strong>종료일:</strong> {selectedTodo.endDate || "미정"}</p>
 

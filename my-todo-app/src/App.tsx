@@ -12,15 +12,14 @@ const App: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [authView, setAuthView] = useState<AuthView>(null);
     const [selectedView, setSelectedView] = useState("Today");
-    const [userName, setUserName] = useState("Denise");
+    const [userName, setUserName] = useState("");
     const [userId, setUserId] = useState<number>(1);
-    const [selectedFriend, setSelectedFriend] = useState<string | null>(null);
+    const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
     const handleLogin = (userName: string, userId: number) => {
         setIsLoggedIn(true);
         setUserName(userName);
         setUserId(userId);
-        setAuthView(null);
     };
 
     const handleLogout = () => {
@@ -40,8 +39,8 @@ const App: React.FC = () => {
             />
             {isLoggedIn ? (
                 <div className="flex flex-1">
-                    <Sidebar setSelectedView={setSelectedView} />
-                    <Content selectedView={selectedView} selectedFriend={selectedFriend} userId={userId} />
+                    <Sidebar setSelectedView={setSelectedView} userId={userId}/>
+                    <Content selectedView={selectedView} selectedFriend={selectedMember} userId={userId} />
                 </div>
             ) : (
                 <div className="flex flex-1 items-center justify-center">
