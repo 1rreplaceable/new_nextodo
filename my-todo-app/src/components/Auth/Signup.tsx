@@ -6,7 +6,7 @@ type SignUpProps = {
 };
 
 const SignUp = ({ onSignUp }: SignUpProps) => {
-    const URL = "localhost:8081/nextodo/signup";
+    const URL = "http://localhost:8081/nextodo/signup";
     const [userEmail, setUserEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
