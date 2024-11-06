@@ -22,14 +22,11 @@ public class TodoController {
     @PostMapping("nextodo/addtodo")//투두 추가
     public ResponseEntity<?> addTodo(@RequestBody TodoDTO todoDTO, HttpSession session){
         log.info("todoDTO : " + todoDTO);
-
         try {
             TodoDTO addTodoResult = todoService.addTodo(todoDTO);
             log.info("addTodoResult = " + addTodoResult);
-
             session.setAttribute("loginEmail", addTodoResult.getTodoId());
             log.info("일정추가 성공");
-
             return ResponseEntity.ok(addTodoResult);  // 성공적으로 추가된 TodoDTO 반환
         } catch (IllegalArgumentException e) {
             log.error("Error: " + e.getMessage());
@@ -37,29 +34,14 @@ public class TodoController {
         } catch (RuntimeException e) {
             log.error("Error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 추가 실패: " + e.getMessage());  // Todo 저장 실패
-        }
-
-//        TodoDTO addTodoResult = todoService.addTodo(todoDTO);
-//        log.info("addTodoResult = " + addTodoResult);
-//        if(addTodoResult != null){
-//            //추가 성공
-//            session.setAttribute("loginEmail", addTodoResult.getTodoId());
-//            log.info("일정추가 성공");
-//            return ResponseEntity.ok(addTodoResult);
-//        }else{
-//            //추가 실패
-//            log.info("일정추가 실패");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("할일 추가 실패");//오류 메세지를 JSON 형식으로 반환
-//        }
+        }//trt-catch end
     }//addTodo end
 
     @GetMapping("nextodo/getalltodo")//전체 투두 가져오기
     //orderby endDate 내림차순
     public ResponseEntity<?> getAllTodo(@RequestParam Long userId){
         log.info("GetAllTodo userId : " + userId);
-
-        try{
-            //사용자 ID로 Todo목록을 가져옴
+        try{//사용자 ID로 Todo목록을 가져옴
             List<TodoDTO> todoDTOList = todoService.getAllTodo(userId);
             // Todo 목록이 비었을 경우 처리
             if (todoDTOList.isEmpty()) {
@@ -69,10 +51,19 @@ public class TodoController {
         }catch (Exception e) {
             log.error("Error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 조회 실패: " + e.getMessage()); // 조회 실패
-        }
-        //try-catch 필요
+        }//try-catch end
     }//getAllTodo
 
-
+    @PutMapping("nextodo/complete")//할일 완료
+    public ResponseEntity<?> completeTodo(@RequestBody List<Long> todoId) {
+        log.info("TodoController.completeTodo & TodoId = " + todoId);
+        try {
+            // 여러 개의 Todo 아이디로 완료 상태를 업데이트
+            todoService.completeTodos(todoId);
+            return ResponseEntity.ok("Todo 완료 상태 업데이트 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Todo 완료 상태 업데이트 실패: " + e.getMessage());
+        }
+    }
 
 }

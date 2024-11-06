@@ -31,7 +31,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
 
     // 멤버 추가 함수
     const handleAddMember = () => {
-        fetch("http://localhost:8081/nextodo/members/add", {
+        fetch("http://localhost:8081/nextodo/addmember", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ memberName: newMemberName, userId: userId })

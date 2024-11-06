@@ -46,32 +46,23 @@ public class TodoService {
 
     public List<TodoDTO> getAllTodo(Long userId){
         log.info("TodoService.getAllTodo & userId : " + userId);
-
-//        Optional<Todo> findByUserId = todoRepository.findByUser(userId);
-
         // userId로 Users 엔티티 조회
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
         // 해당 User의 Todo 목록 조회
         List<Todo> todos = todoRepository.findByUser(user, Sort.by(Sort.Order.desc("endDate")));
-
         // Todo 목록을 TodoDTO로 변환하여 반환
         return todos.stream()
                 .map(TodoDTO::toTodoDTO)
                 .collect(Collectors.toList());
-
-//        if(findByUserId.isPresent()){
-//            //조회 결과가 있다면
-//            Todo todo = findByUserId.get();
-//            TodoDTO gotTodos = TodoDTO.toTodoDTO(todo);
-//            return gotTodos;
-//        }else{
-//            //조회결과가 없다면
-//            return null;
-//        }
     }//getAllTodo end
 
-
+    public void completeTodos(List<Long> todoIds) {
+        List<Todo> todosToUpdate = todoRepository.findAllById(todoIds);
+        for (Todo todo : todosToUpdate) {
+            todo.setComplete("true");  // 완료 상태로 변경
+        }
+        todoRepository.saveAll(todosToUpdate);  // 변경된 Todo 목록을 저장
+    }
 
 }

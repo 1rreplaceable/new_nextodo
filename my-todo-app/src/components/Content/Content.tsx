@@ -95,7 +95,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
         if (selectedTodos.length === 0) return;
         try {
             const response = await fetch("http://localhost:8081/nextodo/complete", {
-                method: "POST",
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },

@@ -29,7 +29,7 @@ public class UserController {
         return "signup";
     }
 
-    @PostMapping("/nextodo/signup")//회원가입 페이지 입력 정보 출력
+    @PostMapping("/nextodo/signup")//회원가입
     public String signup(@RequestBody UserDTO userDTO){
         log.info("UserController signup");
         log.info("userDTO = " + userDTO);
