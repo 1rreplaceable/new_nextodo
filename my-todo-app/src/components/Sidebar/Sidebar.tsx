@@ -4,12 +4,12 @@ import {useEffect, useState} from "react";
 type SidebarProps = {
     setSelectedView: (view: "Today" | "AllTasks" | "Completed" | "AddTask" | "memberTasks") => void;
     userId: number;
-    setSelectedMember: (memberId: number | null) => void;
+    setSelectedMember: (memberName: string | null) => void;
 }
 
 type Member = {
-    id: number;
-    name: string;
+    userId: number;
+    memberName: string;
 }
 
 const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) => {
@@ -99,18 +99,18 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 </div>
                 <ul className="space-y-4">
                     {members.map((member) => (
-                        <li key={member.id}>
+                        <li key={member.memberName}>
                             <button
                                 className="flex items-center space-x-3 p-2 w-full rounded-md text-gray-800 hover:bg-gray-200 transition-colors"
                                 onClick={() => {
-                                    setSelectedView("memberTasks");
-                                    setSelectedMember(member.id);
+                                    setSelectedView("Today");
+                                    setSelectedMember(member.memberName);
                                 }}
                             >
                                 <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
-                                    {member.name ? member.name.charAt(0).toUpperCase() : ""}
+                                    {member.memberName ? member.memberName.charAt(0).toUpperCase() : ""}
                                 </div>
-                                <span>{member.name}</span>
+                                <span>{member.memberName}</span>
                             </button>
                         </li>
                     ))}

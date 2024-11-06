@@ -18,7 +18,7 @@ type Comment = {
 
 type ContentProps = {
     selectedView: string;
-    selectedMember: number | null;
+    selectedMember: string | null;
     userId: number;
     userName: string;
 }
@@ -53,6 +53,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
             .then((data) => setTodos(data))
             .catch((error) => console.error("데이터 불러오기 에러:", error));
     }, [targetUserId, selectedView]);
+    console.log(todos);
 
     const openModal = (todo: Todo) => {
         setSelectedTodo(todo);
@@ -82,15 +83,18 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
     };
     const handleCheckboxChange = (id: number) => {
         setSelectedTodos((prevSelected) => {
-            const updatedSelected = prevSelected.includes(id)
-                ? prevSelected.filter((todoId) => todoId !== id)
-                : [...prevSelected, id];
-
-            console.log("Updated selectedTodos:", updatedSelected);
-            return updatedSelected;
+            if (prevSelected.includes(id)) {
+                return prevSelected.filter((todoId) => todoId !== id);
+            } else {
+                return [...prevSelected, id];
+            }
         });
+        console.log("Checkbox change for ID:", id);
+        console.log("Updated selectedTodos:", selectedTodos);
     };
 
+
+    console.log(selectedMember);
     const handleComplete = async () => {
         if (selectedTodos.length === 0) return;
         try {
@@ -108,7 +112,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
 
             setTodos((prevTodos) =>
                 prevTodos.map((todo) =>
-                    selectedTodos.includes(todo.id) ? { ...todo, completed: true } : todo
+                    selectedTodos.includes(todo.id) ? { ...todo, complete: "true" } : todo
                 )
             );
             setSelectedTodos([]);
@@ -117,6 +121,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
             alert("완료 처리 중 오류가 발생했습니다.");
         }
     };
+
 
     return (
         <main className="flex-1 bg-white p-6">
@@ -148,7 +153,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
             {selectedView === "Today" && (
                 <>
                     <h1 className="text-2xl font-bold mb-4">
-                        {selectedMember ? "그룹 멤버의 오늘 할 일" : "오늘 할 일"}
+                        {selectedMember ? {selectedMember}+`'s 오늘 할 일` : "오늘 할 일"}
                     </h1>
                     <ul className="space-y-2">
                         {todos
