@@ -30,6 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/nextodo/signup")//회원가입
+    //try catch
     public String signup(@RequestBody UserDTO userDTO){
         log.info("UserController signup");
         log.info("userDTO = " + userDTO);

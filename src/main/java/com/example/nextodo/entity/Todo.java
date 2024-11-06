@@ -40,7 +40,6 @@ public class Todo {
         todo.complete = todoDTO.getComplete();
         todo.startDate = todoDTO.getStartDate();
         todo.endDate = todoDTO.getEndDate();
-//        todo.user = todoDTO.getUserId();
         return todo;
     }
 }

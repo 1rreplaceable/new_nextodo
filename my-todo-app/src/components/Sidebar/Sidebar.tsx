@@ -18,7 +18,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
     const [newMemberName, setNewMemberName] = useState("");
 
     useEffect(() => {
-        fetch(`http://localhost:8081/nextodo/members?userId=${userId}`)
+        fetch(`http://localhost:8081/nextodo/getmembers?userId=${userId}`)
             .then((res) => {
                 if (!res.ok) {
                     throw new Error("그룹 목록을 불러오는 데 실패했습니다.");

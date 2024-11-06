@@ -21,7 +21,6 @@ public class MemberDTO {
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setMemberId(members.getMemberId());
         memberDTO.setMemberName(members.getMemberName());
-//        memberDTO.setUserId(members.getMemberId());
         return memberDTO;
     }
 }

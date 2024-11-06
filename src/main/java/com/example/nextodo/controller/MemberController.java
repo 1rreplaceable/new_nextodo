@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +23,7 @@ public class MemberController {
     @PostMapping("nexodo/addmember")//친구 추가(멤버 추가)
     public ResponseEntity<?> addMembers(@RequestBody MemberDTO memberDTO, HttpSession session){
         log.info("멤버 추가 메서드");
-        log.info("현재 사용자 : { }, 추가하려는 사용자 :{ }" + memberDTO.getUserId() + memberDTO.getMemberName());
+        log.info("현재 사용자 : {}, 추가하려는 사용자 :{}", memberDTO.getUserId(), memberDTO.getMemberName());
         try{
             MemberDTO addMemebers = memberService.addMember(memberDTO);
             session.setAttribute("login UserId", addMemebers.getUserId());
@@ -33,4 +36,17 @@ public class MemberController {
         }//try-catch end
     }//addMembers end
 
-}
+    @GetMapping("nextodo/getmembers")//내 친구 목록 가져오기
+    public ResponseEntity<List<String>> getMembers(@RequestParam Long userId){
+        log.info("내 친구목록 가져오기 메서드");
+        log.info("현재 사용자 : {}", userId);
+//        log.info("사용자의 친구 목록 : {}", memberDTO.getMemberName());
+        try{
+            List<String> friendNames = memberService.getMembers(userId);
+            return ResponseEntity.ok(friendNames);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
+        }//try-catch end
+    }//getMembers end
+
+}//class end

@@ -35,7 +35,7 @@ public class UserService {
             Users users = byUserEmail.get();
             if(users.getUserPassword().equals(userDTO.getUserPassword())){
                 //비밀번호 일치
-                //entity -> DTO 변환 후 리턴
+                //entity -> DTO 변환 후 리턴(?)
                 UserDTO goodLogin = UserDTO.toUserDTO(users);
                 return goodLogin;
             }else{

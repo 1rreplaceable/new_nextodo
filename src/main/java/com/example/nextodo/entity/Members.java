@@ -25,8 +25,8 @@ public class Members {
 
     public static Members toMembersEntity(MemberDTO memberDTO){
         Members members = new Members();
-        members.setMemberId(memberDTO.getMemberId());
-        members.setMemberName(memberDTO.getMemberName());
+        members.memberId = memberDTO.getMemberId();
+        members.memberName = memberDTO.getMemberName();
         return members;
     }
 }

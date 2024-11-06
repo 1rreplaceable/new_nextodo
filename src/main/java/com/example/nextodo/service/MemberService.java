@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,10 +32,15 @@ public class MemberService {
         try {
            memberRepository.save(members);
         }catch (Exception e) {
-
+            //
         }
-
         return memberDTO;
-    }
+    }//addMember end
 
-}
+    public List<String> getMembers(Long userId){
+        log.info("MemberService.getMembers & userId: " + userId);
+        List<Members> members = memberRepository.findByUserUserId(userId);
+        return members.stream().map(Members::getMemberName).collect(Collectors.toList());//리스트로 변환?
+    }//getMembers
+
+}//class end
