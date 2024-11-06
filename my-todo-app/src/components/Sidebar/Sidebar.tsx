@@ -34,7 +34,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
         fetch("http://localhost:8081/nextodo/members/add", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: newMemberName, userId: userId })
+            body: JSON.stringify({ memberName: newMemberName, userId: userId })
         })
             .then((res) => res.json())
             .then((newMember) => {

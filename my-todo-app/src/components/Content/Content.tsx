@@ -1,10 +1,10 @@
 // src/components/Content/Content.tsx
-import {useCallback, useEffect, useState} from "react";
+import { useEffect, useState} from "react";
 
 type Todo = {
     id: number;
     title: string;
-    completed: boolean;
+    complete: string;
     startDate: Date;
     endDate: Date;
 }
@@ -68,12 +68,10 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
         setIsModalOpen(false);
         setComments([]);
     };
-
     const getStatusLabel = (todo: Todo) => {
         const startDate = todo.startDate ? new Date(todo.startDate).toISOString().split("T")[0] : null;
         const endDate = todo.endDate ? new Date(todo.endDate).toISOString().split("T")[0] : null;
-
-        if (todo.completed) {
+        if (todo.complete === "true") {
             return "완료";
         } else if (startDate && today < startDate) {
             return "진행전";
@@ -82,13 +80,17 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
         }
         return "상태 없음";
     };
-    const handleCheckboxChange = useCallback((id: number) => {
-        setSelectedTodos((prevSelected) =>
-            prevSelected.includes(id)
+    const handleCheckboxChange = (id: number) => {
+        setSelectedTodos((prevSelected) => {
+            const updatedSelected = prevSelected.includes(id)
                 ? prevSelected.filter((todoId) => todoId !== id)
-                : [...prevSelected, id]
-        );
-    }, [setSelectedTodos]);
+                : [...prevSelected, id];
+
+            console.log("Updated selectedTodos:", updatedSelected);
+            return updatedSelected;
+        });
+    };
+
     const handleComplete = async () => {
         if (selectedTodos.length === 0) return;
         try {
@@ -97,7 +99,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ todoIds: selectedTodos }),
+                body: JSON.stringify({ todoId: selectedTodos }),
             });
 
             if (!response.ok) {
@@ -150,12 +152,12 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                     </h1>
                     <ul className="space-y-2">
                         {todos
-                            .filter((todo) => getStatusLabel(todo) === "진행중" && !todo.completed)
+                            .filter((todo) => getStatusLabel(todo) === "진행중")
                             .map((todo) => (
                                 <li key={todo.id} className="border-b py-2 flex items-center">
                                     <input
                                         type="checkbox"
-                                        checked={selectedTodos.includes(todo.id)}
+                                        checked={selectedTodos.includes(todo.id)} // 개별적으로 체크 상태 관리
                                         onChange={() => handleCheckboxChange(todo.id)}
                                         className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
                                     />
@@ -253,7 +255,6 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                     </form>
                 </>
             )}
-
 
             {selectedView === "Completed" && (
                 <>
