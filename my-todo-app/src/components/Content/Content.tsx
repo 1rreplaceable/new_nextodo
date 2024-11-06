@@ -82,7 +82,14 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
         }
         return "상태 없음";
     };
-
+    const handleComplete = () => {
+        setTodos((prevTodos) =>
+            prevTodos.map((todo) =>
+                selectedTodos.includes(todo.id) ? { ...todo, completed: true } : todo
+            )
+        );
+        setSelectedTodos([]); // 완료 처리 후 선택 초기화
+    };
 
     return (
         <main className="flex-1 bg-white p-6">
@@ -124,11 +131,13 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                     <input
                                         type="checkbox"
                                         checked={selectedTodos.includes(todo.id)}
-                                        onChange={() => setSelectedTodos((prevSelected) =>
-                                            prevSelected.includes(todo.id)
-                                                ? prevSelected.filter((id) => id !== todo.id)
-                                                : [...prevSelected, todo.id]
-                                        )}
+                                        onChange={() =>
+                                            setSelectedTodos((prevSelected) =>
+                                                prevSelected.includes(todo.id)
+                                                    ? prevSelected.filter((id) => id !== todo.id)
+                                                    : [...prevSelected, todo.id]
+                                            )
+                                        }
                                         className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
                                     />
                                     <button
@@ -141,8 +150,21 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                 </li>
                             ))}
                     </ul>
+
+                    {/* 완료 버튼 추가 */}
+                    {selectedTodos.length > 0 && (
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={() => handleComplete()}
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                            >
+                                완료
+                            </button>
+                        </div>
+                    )}
                 </>
             )}
+
 
             {selectedView === "AddTask" && (
                 <>
@@ -216,25 +238,24 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
 
             {selectedView === "Completed" && (
                 <>
-                        <h1 className="text-2xl font-bold mb-4">완료한 일정</h1>
-                        <ul className="space-y-2">
-                            {todos
-                                .filter((todo) => getStatusLabel(todo) === "완료")
-                                .map((todo) => (
-                                    <li key={todo.id} className="border-b py-2">
-                                        <button className="text-left w-full flex justify-between items-center"
-                                                onClick={() => openModal(todo)}>
-                                            <div>
-                                                <span className="font-bold">{todo.title}</span>
-                                                <span className="ml-2 text-sm text-green-500">완료</span>
-                                            </div>
-                                            <span className="text-sm text-gray-500">{todo.endDate}</span>
-                                        </button>
-
-                                    </li>
-                                ))}
-                        </ul>
-                    </>
+                    <h1 className="text-2xl font-bold mb-4">완료한 일정</h1>
+                    <ul className="space-y-2">
+                        {todos
+                            .filter((todo) => getStatusLabel(todo) === "완료")
+                            .map((todo) => (
+                                <li key={todo.id} className="border-b py-2">
+                                    <button className="text-left w-full flex justify-between items-center"
+                                            onClick={() => openModal(todo)}>
+                                        <div>
+                                            <span className="font-bold">{todo.title}</span>
+                                            <span className="ml-2 text-sm text-green-500">완료</span>
+                                        </div>
+                                        <span className="text-sm text-gray-500">{todo.endDate}</span>
+                                    </button>
+                                </li>
+                            ))}
+                    </ul>
+                </>
             )}
 
             {isModalOpen && selectedTodo && (
