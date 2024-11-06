@@ -122,35 +122,35 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
             {selectedView === "AllTasks" && (
                 <>
                     <h1 className="text-2xl font-bold mb-4">모든 일정</h1>
-                    <ul className="space-y-2">
+                    <ul className="">
                         {todos.map((todo) => (
-                            <li key={todo.id} className="border-b py-2">
+                            <li key={todo.id} className="border-b py-4 hover:bg-gray-100">
                                 <button className="text-left w-full flex justify-between items-center" onClick={() => openModal(todo)}>
-                                    <div>
-                                        <span className="font-bold">{todo.title}</span>
-                                        <span
-                                            className={`ml-2 text-sm ${
-                                            getStatusLabel(todo) === "완료"
-                                                ? "text-green-500"
-                                                : getStatusLabel(todo) === "진행전"
-                                                    ? "text-blue-500"
-                                                    : "text-gray-500"
-                                        }`}
-                                            >
+                                    <div className="flex">
+                                        <div
+                                            className={`mr-4 text-sm pl-0 w-10 ${
+                                                getStatusLabel(todo) === "완료"
+                                                    ? "text-green-500"
+                                                    : getStatusLabel(todo) === "진행전"
+                                                        ? "text-blue-500"
+                                                        : "text-gray-500"
+                                            }`}
+                                        >
                                             {getStatusLabel(todo)}
-                                    </span>
-                                </div>
-                                <div>
-                                    {getStatusLabel(todo) === "진행전" && (
-                                        <span className="text-sm text-blue-500 mr-4">
+                                        </div>
+                                        <span className="font-bold">{todo.title}</span>
+                                    </div>
+                                    <div>
+                                        {getStatusLabel(todo) === "진행전" && (
+                                            <span className="text-sm text-blue-500 mr-4">
                                             {new Date(todo.startDate).toISOString().split("T")[0]}
                                         </span>
-                                    )}
-                                    {todo.endDate && (
-                                        <span className="text-sm text-gray-500">
+                                        )}
+                                        {todo.endDate && (
+                                            <span className="text-sm text-gray-500">
                                             {new Date(todo.endDate).toISOString().split("T")[0]}
                                         </span>
-                                    )}
+                                        )}
                                     </div>
                                 </button>
                             </li>
