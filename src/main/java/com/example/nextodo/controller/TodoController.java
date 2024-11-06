@@ -19,7 +19,7 @@ public class TodoController {
     private final TodoService todoService;
 
     @PostMapping("nextodo/addtodo")//투두 추가
-    public ResponseEntity<?> addTodo(@RequestBody TodoDTO todoDTO, HttpSession session){
+    public ResponseEntity<?> addTodo(@RequestBody TodoDTO todoDTO, HttpSession session){//HTTP 응답을 반환할 때 사용하는 제네릭 타입
         log.info("todoDTO : " + todoDTO);
         try {
             TodoDTO addTodoResult = todoService.addTodo(todoDTO);
@@ -55,7 +55,7 @@ public class TodoController {
         try { // 여러 개의 Todo 아이디로 완료 상태를 업데이트
             todoService.completeTodos(todoId);
             return ResponseEntity.ok("Todo 완료 상태 업데이트 완료");
-        }catch (Exception e) {
+        }catch (Exception e) {//HttpStatus.INTERNAL_SERVER_ERROR는 예외처리를 자동으로 해준다. 400에러인지 500에러인지를 자동으로 출력.
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Todo 완료 상태 업데이트 실패: " + e.getMessage());
         }//try-catch end
     }//completeTodo end

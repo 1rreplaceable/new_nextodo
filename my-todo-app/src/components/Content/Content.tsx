@@ -2,7 +2,7 @@
 import { useEffect, useState} from "react";
 
 type Todo = {
-    id: number;
+    todoId: number;
     title: string;
     complete: string;
     startDate: Date;
@@ -34,7 +34,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
     const [startDate, setStartDate] = useState(today);
     const [endDate, setEndDate] = useState(today);
     const [commentText, setCommentText] = useState("");
-
+console.log(todos, 't')
     const targetUserId = selectedMember || userId;
 
     useEffect(() => {
@@ -81,13 +81,11 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
         return "상태 없음";
     };
     const handleCheckboxChange = (id: number) => {
-        setSelectedTodos((prevSelected) => {
-            if (prevSelected.includes(id)) {
-                return prevSelected.filter((todoId) => todoId !== id);
-            } else {
-                return [...prevSelected, id];
-            }
-        });
+      if(selectedTodos.includes(id)) {
+          setSelectedTodos((prev) => prev.filter((todoid) => todoid != id));
+      } else {
+          setSelectedTodos((prev) => [...prev, id])
+      }
     };
 
     const handleComplete = async () => {
@@ -98,7 +96,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ todoId: selectedTodos }),
+                body: JSON.stringify( selectedTodos),
             });
 
             if (!response.ok) {
@@ -168,11 +166,11 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                         {todos
                             .filter((todo) => getStatusLabel(todo) === "진행중")
                             .map((todo) => (
-                                <li key={todo.id} className="border-b py-4 flex items-center">
+                                <li key={todo.todoId} className="border-b py-4 flex items-center">
                                     <input
                                         type="checkbox"
-                                        // checked={selectedTodos.includes(todo.id)} // 개별적으로 체크 상태 관리
-                                        onChange={() => handleCheckboxChange(todo.id)}
+                                        checked={selectedTodos.includes(todo.todoId)} // 개별적으로 체크 상태 관리
+                                        onChange={() => handleCheckboxChange(todo.todoId)}
                                         className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
                                     />
                                     <button

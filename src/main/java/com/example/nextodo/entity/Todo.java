@@ -8,8 +8,8 @@ import lombok.Setter;
 import java.sql.Date;
 
 @Entity
-@Setter
 @Getter
+@Setter//Setter는 안쓰는게 좋음.
 @Table(name = "todo")//DB에 정의한 테이블이 생성됨.
 @RequiredArgsConstructor
 public class Todo {
