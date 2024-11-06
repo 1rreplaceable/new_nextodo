@@ -18,15 +18,17 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
     const [newMemberName, setNewMemberName] = useState("");
 
     useEffect(() => {
-        fetch(`http://localhost:8081/nextodo/getmembers?userId=${userId}`)
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error("그룹 목록을 불러오는 데 실패했습니다.");
-                }
-                return res.json();
-            })
-            .then((data) => setMembers(data))
-            .catch((error) => console.error("Error fetching members:", error));
+        if (userId) {
+            fetch(`http://localhost:8081/nextodo/getmembers?userId=${userId}`)
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new Error("그룹 목록을 불러오는 데 실패했습니다.");
+                    }
+                    return res.json();
+                })
+                .then((data) => setMembers(data))
+                .catch((error) => console.error("Error fetching members:", error));
+        }
     }, [userId]);
 
     // 멤버 추가 함수

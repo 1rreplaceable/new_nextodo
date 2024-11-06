@@ -53,7 +53,6 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
             .then((data) => setTodos(data))
             .catch((error) => console.error("데이터 불러오기 에러:", error));
     }, [targetUserId, selectedView]);
-    console.log(todos);
 
     const openModal = (todo: Todo) => {
         setSelectedTodo(todo);
@@ -89,12 +88,8 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                 return [...prevSelected, id];
             }
         });
-        console.log("Checkbox change for ID:", id);
-        console.log("Updated selectedTodos:", selectedTodos);
     };
 
-
-    console.log(selectedMember);
     const handleComplete = async () => {
         if (selectedTodos.length === 0) return;
         try {
@@ -121,7 +116,6 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
             alert("완료 처리 중 오류가 발생했습니다.");
         }
     };
-
 
     return (
         <main className="flex-1 bg-white p-6">
@@ -153,7 +147,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
             {selectedView === "Today" && (
                 <>
                     <h1 className="text-2xl font-bold mb-4">
-                        {selectedMember ? {selectedMember}+`'s 오늘 할 일` : "오늘 할 일"}
+                        {selectedMember ? {}+`'s 오늘 할 일` : "오늘 할 일"}
                     </h1>
                     <ul className="space-y-2">
                         {todos
@@ -162,7 +156,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                 <li key={todo.id} className="border-b py-2 flex items-center">
                                     <input
                                         type="checkbox"
-                                        checked={selectedTodos.includes(todo.id)} // 개별적으로 체크 상태 관리
+                                        // checked={selectedTodos.includes(todo.id)} // 개별적으로 체크 상태 관리
                                         onChange={() => handleCheckboxChange(todo.id)}
                                         className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
                                     />
@@ -176,9 +170,6 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                 </li>
                             ))}
                     </ul>
-
-                    {/* 완료 버튼 추가 */}
-                    {selectedTodos.length > 0 && (
                         <div className="flex justify-end mt-4">
                             <button
                                 onClick={handleComplete}
@@ -187,7 +178,6 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                 완료
                             </button>
                         </div>
-                    )}
                 </>
             )}
 
