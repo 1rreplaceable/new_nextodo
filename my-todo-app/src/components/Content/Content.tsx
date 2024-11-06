@@ -18,11 +18,12 @@ type Comment = {
 
 type ContentProps = {
     selectedView: string;
-    selectedFriend: string | null;
+    selectedMember: number | null;
     userId: number;
     userName: string;
 }
-const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProps) => {
+
+const Content = ({ selectedView, selectedMember, userId, userName }: ContentProps) => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
     const [selectedTodos, setSelectedTodos] = useState<number[]>([]);
@@ -33,8 +34,11 @@ const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProp
     const [startDate, setStartDate] = useState(today);
     const [endDate, setEndDate] = useState(today);
     const [commentText, setCommentText] = useState("");
+
+    const targetUserId = selectedMember || userId;
+
     useEffect(() => {
-        fetch(`http://localhost:8081/nextodo/todos?userId=${userId}`, {
+        fetch(`http://localhost:8081/nextodo/todos?userId=${targetUserId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -46,43 +50,17 @@ const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProp
                 }
                 return res.json();
             })
-            .then((data) => {
-                setTodos(data);
-            })
-            .catch((error) => {
-                console.error("데이터 불러오기 에러:", error);
-            });
-    }, [userId, selectedView]);
-    // 샘플 데이터
-    useEffect(() => {
-        const sampleTodos: Todo[] = [
-            { id: 1, title: "아침에 운동하기", completed: false, startDate: "2024-11-03", endDate: "2024-11-10" },
-            { id: 2, title: "저녁에 밥먹기", completed: true, startDate: "2024-11-02", endDate: "2024-11-06" },
-            { id: 3, title: "보고서 작성하기", completed: false, startDate: "2024-11-05", endDate: "2024-11-05" },
-        ];
-        setTodos(sampleTodos);
-    }, [selectedView]);
+            .then((data) => setTodos(data))
+            .catch((error) => console.error("데이터 불러오기 에러:", error));
+    }, [targetUserId, selectedView]);
 
     const openModal = (todo: Todo) => {
         setSelectedTodo(todo);
         setIsModalOpen(true);
-        // 댓글 샘플데이터
-        const sampleComments: Comment[] = [
-            { id: 1, text: "굿!", writer: "Stijn", userId: 1, },
-            { id: 2, text: "별로", writer: "Alice", userId: 3, },
-        ];
-        useEffect(()=>{
-            fetch(`http://localhost:8081/nextodo/todoId=${todo.id}`)
-                .then((res) => {
-                    if (!res.ok) {
-                        throw new Error("댓글 목록을 불러오는 데 실패했습니다.");
-                    }
-                    return res.json();
-                })
-                .then((data) => setComments(data))
-                .catch((error) => console.error("Error fetching members:", error));
-            }, []);
-        setComments(sampleComments);
+        fetch(`http://localhost:8081/nextodo/comments?todoId=${todo.id}`)
+            .then((res) => res.json())
+            .then((data) => setComments(data))
+            .catch((error) => console.error("Error fetching comments:", error));
     };
 
     const closeModal = () => {
@@ -105,20 +83,6 @@ const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProp
         return "상태 없음";
     };
 
-    const handleCheckboxChange = (id: number) => {
-        setSelectedTodos((prevSelected) =>
-            prevSelected.includes(id) ? prevSelected.filter((todoId) => todoId !== id) : [...prevSelected, id]
-        );
-    };
-
-    const handleComplete = () => {
-        setTodos((prevTodos) =>
-            prevTodos.map((todo) =>
-                selectedTodos.includes(todo.id) ? { ...todo, completed: true } : todo
-            )
-        );
-        setSelectedTodos([]);
-    };
 
     return (
         <main className="flex-1 bg-white p-6">
@@ -149,10 +113,9 @@ const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProp
 
             {selectedView === "Today" && (
                 <>
-                    <div className="w-full flex justify-between items-center">
-                        <h1 className="text-2xl font-bold mb-4">오늘 할 일</h1>
-                        <div className="text-gray200">{todos.filter((todo)=>getStatusLabel(todo) === "진행중" && !todo.completed).length} 작업</div>
-                    </div>
+                    <h1 className="text-2xl font-bold mb-4">
+                        {selectedMember ? "그룹 멤버의 오늘 할 일" : "오늘 할 일"}
+                    </h1>
                     <ul className="space-y-2">
                         {todos
                             .filter((todo) => getStatusLabel(todo) === "진행중" && !todo.completed)
@@ -161,27 +124,23 @@ const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProp
                                     <input
                                         type="checkbox"
                                         checked={selectedTodos.includes(todo.id)}
-                                        onChange={() => handleCheckboxChange(todo.id)}
-                                        className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded dark:bg-gray-700"
+                                        onChange={() => setSelectedTodos((prevSelected) =>
+                                            prevSelected.includes(todo.id)
+                                                ? prevSelected.filter((id) => id !== todo.id)
+                                                : [...prevSelected, todo.id]
+                                        )}
+                                        className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
                                     />
-                                    <button className="text-left flex-1"
-                                            onClick={() => openModal(todo)}>
+                                    <button
+                                        className="text-left flex-1"
+                                        onClick={() => openModal(todo)}
+                                    >
                                         <span className="font-bold">{todo.title}</span>
                                         <span className="ml-2 text-sm text-gray-500">진행중</span>
                                     </button>
                                 </li>
                             ))}
                     </ul>
-                    {todos.length > 0 && (
-                        <div className="pt-4 flex justify-end">
-                            <button
-                                className="space-y-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                                onClick={handleComplete}
-                            >
-                                완료
-                            </button>
-                        </div>
-                    )}
                 </>
             )}
 
@@ -255,7 +214,6 @@ const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProp
                 </>
             )}
 
-
             {selectedView === "Completed" && (
                 <>
                         <h1 className="text-2xl font-bold mb-4">완료한 일정</h1>
@@ -317,7 +275,7 @@ const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProp
                                 onSubmit={(e) => {
                                     e.preventDefault();
                                     console.log(userId + " " + userName + " " + commentText);
-                                    setComments([...comments, {id: Date.now(), text: commentText, writer: userName, userId: userId}]);
+                                    setComments([...comments, {id: 1, text: commentText, writer: userName, userId: userId}]);
                                     fetch("http://localhost:8081/nextodo/todos/comment", {
                                         method: 'POST',
                                         headers: {

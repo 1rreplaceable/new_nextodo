@@ -14,7 +14,7 @@ const App: React.FC = () => {
     const [selectedView, setSelectedView] = useState("Today");
     const [userName, setUserName] = useState("");
     const [userId, setUserId] = useState<number>(1);
-    const [selectedMember, setSelectedMember] = useState<string | null>(null);
+    const [selectedMember, setSelectedMember] = useState<number | null>(null);
 
     const handleLogin = (userName: string, userId: number) => {
         setIsLoggedIn(true);
@@ -39,8 +39,8 @@ const App: React.FC = () => {
             />
             {isLoggedIn ? (
                 <div className="flex flex-1">
-                    <Sidebar setSelectedView={setSelectedView} userId={userId}/>
-                    <Content selectedView={selectedView} selectedFriend={selectedMember} userId={userId} userName={userName}/>
+                    <Sidebar setSelectedView={setSelectedView} userId={userId} setSelectedMember={setSelectedMember}/>
+                    <Content selectedView={selectedView} selectedMember={selectedMember} userId={userId} userName={userName}/>
                 </div>
             ) : (
                 <div className="flex flex-1 items-center justify-center">
