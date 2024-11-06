@@ -40,7 +40,7 @@ const App: React.FC = () => {
             {isLoggedIn ? (
                 <div className="flex flex-1">
                     <Sidebar setSelectedView={setSelectedView} userId={userId}/>
-                    <Content selectedView={selectedView} selectedFriend={selectedMember} userId={userId} />
+                    <Content selectedView={selectedView} selectedFriend={selectedMember} userId={userId} userName={userName}/>
                 </div>
             ) : (
                 <div className="flex flex-1 items-center justify-center">

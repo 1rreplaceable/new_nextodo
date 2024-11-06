@@ -12,15 +12,17 @@ type Todo = {
 type Comment = {
     id: number;
     text: string;
-    author: string;
+    writer: string;
+    userId: number;
 }
 
 type ContentProps = {
     selectedView: string;
     selectedFriend: string | null;
     userId: number;
+    userName: string;
 }
-const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
+const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProps) => {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
     const [selectedTodos, setSelectedTodos] = useState<number[]>([]);
@@ -30,6 +32,7 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
     const today = new Date().toISOString().split("T")[0];
     const [startDate, setStartDate] = useState(today);
     const [endDate, setEndDate] = useState(today);
+    const [commentText, setCommentText] = useState("");
     useEffect(() => {
         fetch(`http://localhost:8081/nextodo/todos?userId=${userId}`, {
             method: 'GET',
@@ -65,8 +68,8 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
         setIsModalOpen(true);
         // 댓글 샘플데이터
         const sampleComments: Comment[] = [
-            { id: 1, text: "굿!", author: "Stijn" },
-            { id: 2, text: "별로", author: "Alice" },
+            { id: 1, text: "굿!", writer: "Stijn", userId: 1, },
+            { id: 2, text: "별로", writer: "Alice", userId: 3, },
         ];
         useEffect(()=>{
             fetch(`http://localhost:8081/nextodo/todoId=${todo.id}`)
@@ -146,7 +149,10 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
 
             {selectedView === "Today" && (
                 <>
-                    <h1 className="text-2xl font-bold mb-4">오늘 할 일</h1>
+                    <div className="w-full flex justify-between items-center">
+                        <h1 className="text-2xl font-bold mb-4">오늘 할 일</h1>
+                        <div className="text-gray200">{todos.filter((todo)=>getStatusLabel(todo) === "진행중" && !todo.completed).length} 작업</div>
+                    </div>
                     <ul className="space-y-2">
                         {todos
                             .filter((todo) => getStatusLabel(todo) === "진행중" && !todo.completed)
@@ -191,7 +197,7 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
                                     'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                    id: userId,
+                                    userId: userId,
                                     complete: false,
                                     title: title,
                                     startDate: startDate,
@@ -292,13 +298,13 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
                                 <h3 className="text-lg font-semibold mb-4">Comments</h3>
                                 <ul className="space-y-4">
                                     {comments.map((comment) => (
-                                        <li key={comment.id} className="flex items-start space-x-4">
+                                        <li key={comment.userId} className="flex items-start space-x-4">
                                             <div
                                                 className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
-                                                {comment.author.charAt(0).toUpperCase()}
+                                                {comment.writer.charAt(0).toUpperCase()}
                                             </div>
                                             <div className="bg-gray-100 rounded-lg p-4 flex-1">
-                                                <p className="font-semibold">{comment.author}</p>
+                                                <p className="font-semibold">{comment.writer}</p>
                                                 <p>{comment.text}</p>
                                             </div>
                                         </li>
@@ -310,12 +316,38 @@ const Content = ({ selectedView, selectedFriend, userId }: ContentProps) => {
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
-                                    setComments([...comments, {id: Date.now(), text: "New comment", author: "User"}]);
+                                    console.log(userId + " " + userName + " " + commentText);
+                                    setComments([...comments, {id: Date.now(), text: commentText, writer: userName, userId: userId}]);
+                                    fetch("http://localhost:8081/nextodo/todos/comment", {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                            text: commentText,
+                                            writer: userName,
+                                            userId: userId,
+                                        }),
+                                    }).then((res) => {
+                                        if (!res.ok) {
+                                            throw new Error("댓글 입력에 실패했습니다.");
+                                        }
+                                        return res.json();
+                                    }).then((newComment) => {
+                                        setComments((prevComments) => [...prevComments, newComment]);
+                                        alert("댓글이 입력되었습니다!");
+                                        setCommentText("");
+                                    }).catch((error) => {
+                                        console.error("일정 추가 오류:", error);
+                                        alert("댓글 입력에 실패했습니다.");
+                                    });
                                 }}
                                 className="mt-4"
                             >
                                 <input
                                     type="text"
+                                    value={commentText}
+                                    onChange={(e) => setCommentText(e.target.value)}
                                     placeholder="댓글을 입력하세요"
                                     className="w-full p-2 border rounded-md"
                                 />
