@@ -20,7 +20,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("nexodo/addmember")//친구 추가(멤버 추가)
+    @PostMapping("nextodo/addmember")//친구 추가(멤버 추가)
     public ResponseEntity<?> addMembers(@RequestBody MemberDTO memberDTO, HttpSession session){
         log.info("멤버 추가 메서드");
         log.info("현재 사용자 : {}, 추가하려는 사용자 :{}", memberDTO.getUserId(), memberDTO.getMemberName());
@@ -43,6 +43,7 @@ public class MemberController {
 //        log.info("사용자의 친구 목록 : {}", memberDTO.getMemberName());
         try{
             List<String> friendNames = memberService.getMembers(userId);
+            log.info("Members : " + friendNames);
             return ResponseEntity.ok(friendNames);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
