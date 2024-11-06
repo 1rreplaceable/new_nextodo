@@ -7,6 +7,7 @@ import com.example.nextodo.repository.TodoRepository;
 import com.example.nextodo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,7 +54,7 @@ public class TodoService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // 해당 User의 Todo 목록 조회
-        List<Todo> todos = todoRepository.findByUser(user);
+        List<Todo> todos = todoRepository.findByUser(user, Sort.by(Sort.Order.desc("endDate")));
 
         // Todo 목록을 TodoDTO로 변환하여 반환
         return todos.stream()
@@ -69,6 +70,8 @@ public class TodoService {
 //            //조회결과가 없다면
 //            return null;
 //        }
-    }
+    }//getAllTodo end
+
+
 
 }
