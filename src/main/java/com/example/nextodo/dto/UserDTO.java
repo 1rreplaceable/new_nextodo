@@ -1,6 +1,6 @@
 package com.example.nextodo.dto;
 
-import com.example.nextodo.entity.UserEntity;
+import com.example.nextodo.entity.Users;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,12 +15,12 @@ public class UserDTO {
     private String userPassword;
     private String userName;
 
-    public static UserDTO toUserDTO(UserEntity userEntity) {
+    public static UserDTO toUserDTO(Users users) {
         UserDTO userDTO = new UserDTO();
-        userDTO.setUserId(userEntity.getId());
-        userDTO.setUserEmail(userEntity.getUserEmail());
-        userDTO.setUserPassword(userEntity.getUserPassword());
-        userDTO.setUserName(userEntity.getUserName());
+        userDTO.setUserId(users.getUserId());
+        userDTO.setUserEmail(users.getUserEmail());
+        userDTO.setUserPassword(users.getUserPassword());
+        userDTO.setUserName(users.getUserName());
         return userDTO;
     }
 }

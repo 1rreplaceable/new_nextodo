@@ -191,7 +191,7 @@ const Content = ({ selectedView, selectedFriend, userId, userName }: ContentProp
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
-                            fetch("http://localhost:8081/nextodo/todos/add", {
+                            fetch("http://localhost:8081/nextodo/addtodo", {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',

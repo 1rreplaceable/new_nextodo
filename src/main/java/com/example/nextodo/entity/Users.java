@@ -11,10 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Getter
 @Table(name = "user")//DB에 정의한 테이블이 생성됨.
-public class UserEntity {//테이블 생성.
+public class Users {//테이블 생성.
     @Id//pk지정
     @GeneratedValue(strategy = GenerationType.IDENTITY)//Auto_Increment
-    private Long id;
+    private Long userId;
 
     @Column(unique = true)//unique 제약조건 추가
     private String userEmail;
@@ -25,11 +25,11 @@ public class UserEntity {//테이블 생성.
     @Column
     private String userName;
     
-    public static UserEntity toUserEntity(UserDTO userDTO){
-        UserEntity userEntity = new UserEntity();
-        userEntity.userEmail = userDTO.getUserEmail();
-        userEntity.userPassword = userDTO.getUserPassword();
-        userEntity.userName = userDTO.getUserName();
-        return userEntity;
+    public static Users toUserEntity(UserDTO userDTO){
+        Users users = new Users();
+        users.userEmail = userDTO.getUserEmail();
+        users.userPassword = userDTO.getUserPassword();
+        users.userName = userDTO.getUserName();
+        return users;
     }
 }
