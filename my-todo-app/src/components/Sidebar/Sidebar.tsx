@@ -28,12 +28,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
             .then((data) => setMembers(data))
             .catch((error) => console.error("Error fetching members:", error));
     }, [userId]);
-    // 샘플 친구 데이터
-    // const members: Member[] = [
-    //     { id: 1, name: "Alice" },
-    //     { id: 2, name: "Bob" },
-    //     { id: 3, name: "Charlie" },
-    // ];
+
     // 멤버 추가 함수
     const handleAddMember = () => {
         fetch("http://localhost:8081/nextodo/members/add", {
@@ -113,7 +108,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                                 }}
                             >
                                 <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
-                                    {member.name.charAt(0).toUpperCase()}
+                                    {member.name ? member.name.charAt(0).toUpperCase() : ""}
                                 </div>
                                 <span>{member.name}</span>
                             </button>

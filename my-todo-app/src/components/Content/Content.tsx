@@ -1,5 +1,5 @@
 // src/components/Content/Content.tsx
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 
 type Todo = {
     id: number;
@@ -82,13 +82,38 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
         }
         return "상태 없음";
     };
-    const handleComplete = () => {
-        setTodos((prevTodos) =>
-            prevTodos.map((todo) =>
-                selectedTodos.includes(todo.id) ? { ...todo, completed: true } : todo
-            )
+    const handleCheckboxChange = useCallback((id: number) => {
+        setSelectedTodos((prevSelected) =>
+            prevSelected.includes(id)
+                ? prevSelected.filter((todoId) => todoId !== id)
+                : [...prevSelected, id]
         );
-        setSelectedTodos([]); // 완료 처리 후 선택 초기화
+    }, [setSelectedTodos]);
+    const handleComplete = async () => {
+        if (selectedTodos.length === 0) return;
+        try {
+            const response = await fetch("http://localhost:8081/nextodo/complete", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ todoIds: selectedTodos }),
+            });
+
+            if (!response.ok) {
+                throw new Error("완료 상태 업데이트에 실패했습니다.");
+            }
+
+            setTodos((prevTodos) =>
+                prevTodos.map((todo) =>
+                    selectedTodos.includes(todo.id) ? { ...todo, completed: true } : todo
+                )
+            );
+            setSelectedTodos([]);
+        } catch (error) {
+            console.error("Error updating todo status:", error);
+            alert("완료 처리 중 오류가 발생했습니다.");
+        }
     };
 
     return (
@@ -131,13 +156,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                     <input
                                         type="checkbox"
                                         checked={selectedTodos.includes(todo.id)}
-                                        onChange={() =>
-                                            setSelectedTodos((prevSelected) =>
-                                                prevSelected.includes(todo.id)
-                                                    ? prevSelected.filter((id) => id !== todo.id)
-                                                    : [...prevSelected, todo.id]
-                                            )
-                                        }
+                                        onChange={() => handleCheckboxChange(todo.id)}
                                         className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
                                     />
                                     <button
@@ -155,7 +174,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                     {selectedTodos.length > 0 && (
                         <div className="flex justify-end mt-4">
                             <button
-                                onClick={() => handleComplete()}
+                                onClick={handleComplete}
                                 className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                             >
                                 완료
@@ -269,8 +288,8 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                             </button>
                             <h2 className="text-xl font-bold mb-4">{selectedTodo.title}</h2>
                             <p><strong>완료 여부:</strong> {getStatusLabel(selectedTodo)}</p>
-                            <p><strong>시작일:</strong> {selectedTodo.startDate || "미정"}</p>
-                            <p><strong>종료일:</strong> {selectedTodo.endDate || "미정"}</p>
+                            {/*<p><strong>시작일:</strong> {selectedTodo.startDate || "미정"}</p>*/}
+                            {/*<p><strong>종료일:</strong> {selectedTodo.endDate || "미정"}</p>*/}
 
                             {/* 댓글 섹션 */}
                             <div className="mt-6">
@@ -295,7 +314,6 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
-                                    console.log(userId + " " + userName + " " + commentText);
                                     setComments([...comments, {id: 1, text: commentText, writer: userName, userId: userId}]);
                                     fetch("http://localhost:8081/nextodo/todos/comment", {
                                         method: 'POST',
