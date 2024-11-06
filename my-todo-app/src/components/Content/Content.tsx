@@ -105,7 +105,7 @@ console.log(todos, 't')
 
             setTodos((prevTodos) =>
                 prevTodos.map((todo) =>
-                    selectedTodos.includes(todo.id) ? { ...todo, complete: "true" } : todo
+                    selectedTodos.includes(todo.todoId) ? { ...todo, complete: "true" } : todo
                 )
             );
             setSelectedTodos([]);
@@ -122,7 +122,7 @@ console.log(todos, 't')
                     <h1 className="text-2xl font-bold mb-4">모든 일정</h1>
                     <ul className="">
                         {todos.map((todo) => (
-                            <li key={todo.id} className="border-b py-4 hover:bg-gray-100">
+                            <li key={todo.todoId} className="border-b py-4 hover:bg-gray-100">
                                 <button className="text-left w-full flex justify-between items-center" onClick={() => openModal(todo)}>
                                     <div className="flex items-center">
                                         <div
@@ -274,7 +274,7 @@ console.log(todos, 't')
                         {todos
                             .filter((todo) => getStatusLabel(todo) === "완료")
                             .map((todo) => (
-                                <li key={todo.id} className="border-b py-4">
+                                <li key={todo.todoId} className="border-b py-4">
                                     <button className="text-left w-full flex justify-between items-center"
                                             onClick={() => openModal(todo)}>
                                         <div className="flex items-center">
