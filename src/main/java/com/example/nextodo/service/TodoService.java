@@ -9,6 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,5 +42,33 @@ public class TodoService {
 
         return TodoDTO.toTodoDTO(todo);
     }//addTodo end
+
+    public List<TodoDTO> getAllTodo(Long userId){
+        log.info("TodoService.getAllTodo & userId : " + userId);
+
+//        Optional<Todo> findByUserId = todoRepository.findByUser(userId);
+
+        // userId로 Users 엔티티 조회
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        // 해당 User의 Todo 목록 조회
+        List<Todo> todos = todoRepository.findByUser(user);
+
+        // Todo 목록을 TodoDTO로 변환하여 반환
+        return todos.stream()
+                .map(TodoDTO::toTodoDTO)
+                .collect(Collectors.toList());
+
+//        if(findByUserId.isPresent()){
+//            //조회 결과가 있다면
+//            Todo todo = findByUserId.get();
+//            TodoDTO gotTodos = TodoDTO.toTodoDTO(todo);
+//            return gotTodos;
+//        }else{
+//            //조회결과가 없다면
+//            return null;
+//        }
+    }
 
 }

@@ -5,8 +5,8 @@ type Todo = {
     id: number;
     title: string;
     completed: boolean;
-    startDate: string;
-    endDate: string;
+    startDate: Date;
+    endDate: Date;
 }
 
 type Comment = {
@@ -38,7 +38,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
     const targetUserId = selectedMember || userId;
 
     useEffect(() => {
-        fetch(`http://localhost:8081/nextodo/todos?userId=${targetUserId}`, {
+        fetch(`http://localhost:8081/nextodo/getalltodo?userId=${targetUserId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -165,7 +165,6 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                 </>
             )}
 
-
             {selectedView === "AddTask" && (
                 <>
                     <h1 className="text-2xl font-bold mb-4">일정 추가하기</h1>
@@ -235,6 +234,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                     </form>
                 </>
             )}
+
 
             {selectedView === "Completed" && (
                 <>

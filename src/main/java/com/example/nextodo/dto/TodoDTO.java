@@ -29,7 +29,7 @@ public class TodoDTO {
         todoDTO.setTitle(todo.getTitle());
         todoDTO.setComplete(todo.getComplete());
         todoDTO.setStartDate(todo.getStartDate());
-//        todoDTO.setUserId(todo.getUser().getUserId());
+        todoDTO.setEndDate(todo.getEndDate());
         return todoDTO;
     }
 }

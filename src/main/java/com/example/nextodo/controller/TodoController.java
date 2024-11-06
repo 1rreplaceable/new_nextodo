@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -49,6 +51,26 @@ public class TodoController {
 //            log.info("일정추가 실패");
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("할일 추가 실패");//오류 메세지를 JSON 형식으로 반환
 //        }
-    }
+    }//addTodo end
+
+    @GetMapping("nextodo/getalltodo")//전체 투두 가져오기
+    //orderby endDate 내림차순
+    public ResponseEntity<?> getAllTodo(@RequestParam Long userId){
+        log.info("GetAllTodo userId : " + userId);
+
+        try{
+            //사용자 ID로 Todo목록을 가져옴
+            List<TodoDTO> todoDTOList = todoService.getAllTodo(userId);
+            // Todo 목록이 비었을 경우 처리
+            if (todoDTOList.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자에 대한 Todo가 없습니다.");
+            }
+            return ResponseEntity.ok(todoDTOList);
+        }catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 조회 실패: " + e.getMessage()); // 조회 실패
+        }
+        //try-catch 필요
+    }//getAllTodo
 
 }
