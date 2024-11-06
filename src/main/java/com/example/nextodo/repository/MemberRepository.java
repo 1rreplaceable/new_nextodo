@@ -1,7 +1,6 @@
 package com.example.nextodo.repository;
 
 import com.example.nextodo.entity.Members;
-import com.example.nextodo.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -28,5 +28,6 @@ public class Members {
         members.memberId = memberDTO.getMemberId();
         members.memberName = memberDTO.getMemberName();
         return members;
-    }
-}
+    }//toMembersEntity end
+
+}//class end

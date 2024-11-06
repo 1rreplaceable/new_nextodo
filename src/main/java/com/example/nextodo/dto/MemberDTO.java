@@ -16,11 +16,4 @@ public class MemberDTO {
     private Long memberId;
     private String memberName;
     private Long userId;
-
-    public static MemberDTO toMemberDTO(Members members){
-        MemberDTO memberDTO = new MemberDTO();
-        memberDTO.setMemberId(members.getMemberId());
-        memberDTO.setMemberName(members.getMemberName());
-        return memberDTO;
-    }
-}
+}//class end

@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 @Getter
 @Table(name = "user")//DB에 정의한 테이블이 생성됨.
-public class Users {//테이블 생성.
+public class Users {
     @Id//pk지정
     @GeneratedValue(strategy = GenerationType.IDENTITY)//Auto_Increment
     private Long userId;
@@ -31,5 +31,6 @@ public class Users {//테이블 생성.
         users.userPassword = userDTO.getUserPassword();
         users.userName = userDTO.getUserName();
         return users;
-    }
-}
+    }//toUserEntity end
+
+}//class end

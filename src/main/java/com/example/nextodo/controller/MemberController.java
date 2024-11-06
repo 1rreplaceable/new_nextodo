@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +39,6 @@ public class MemberController {
     public ResponseEntity<List<String>> getMembers(@RequestParam Long userId){
         log.info("내 친구목록 가져오기 메서드");
         log.info("현재 사용자 : {}", userId);
-//        log.info("사용자의 친구 목록 : {}", memberDTO.getMemberName());
         try{
             List<String> friendNames = memberService.getMembers(userId);
             log.info("Members : " + friendNames);

@@ -8,7 +8,6 @@ import com.example.nextodo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,18 +21,14 @@ public class MemberService {
 
     public MemberDTO addMember(MemberDTO memberDTO) {
         log.info("MemberService.addMember & memberDTO : " + memberDTO);
-
-        Users user = userRepository.findById(memberDTO.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
+        Users user = userRepository.findById(memberDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Members members = Members.toMembersEntity(memberDTO);
         members.setUser(user);
-
         try {
            memberRepository.save(members);
         }catch (Exception e) {
-            //
-        }
+            log.error("Error: " + e.getMessage());
+        }//try-catch end
         return memberDTO;
     }//addMember end
 

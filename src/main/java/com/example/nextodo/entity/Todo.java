@@ -30,7 +30,7 @@ public class Todo {
     @Column
     private Date endDate;
 
-    @ManyToOne //외래키로 사용할 userId 필드
+    @ManyToOne//외래키로 사용할 userId 필드
     @JoinColumn(name = "user_id")//user 테이블의 PK와 매핑될 컬럼 이름
     private Users user;
 
@@ -41,5 +41,6 @@ public class Todo {
         todo.startDate = todoDTO.getStartDate();
         todo.endDate = todoDTO.getEndDate();
         return todo;
-    }
-}
+    }//toTodoEntity end
+
+}//class end

@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Slf4j
@@ -27,7 +26,7 @@ public class TodoController {
             log.info("addTodoResult = " + addTodoResult);
             session.setAttribute("loginEmail", addTodoResult.getTodoId());
             log.info("일정추가 성공");
-            return ResponseEntity.ok(addTodoResult);  // 성공적으로 추가된 TodoDTO 반환
+            return ResponseEntity.ok(addTodoResult);//성공적으로 추가된 TodoDTO 반환
         } catch (IllegalArgumentException e) {
             log.error("Error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자를 찾을 수 없습니다: " + e.getMessage());  // 사용자 미존재
@@ -43,27 +42,25 @@ public class TodoController {
         log.info("GetAllTodo userId : " + userId);
         try{//사용자 ID로 Todo목록을 가져옴
             List<TodoDTO> todoDTOList = todoService.getAllTodo(userId);
-            // Todo 목록이 비었을 경우 처리
-            if (todoDTOList.isEmpty()) {
+            if (todoDTOList.isEmpty()) {// Todo 목록이 비었을 경우 처리
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자에 대한 Todo가 없습니다.");
-            }
+            }//if end
             return ResponseEntity.ok(todoDTOList);
         }catch (Exception e) {
             log.error("Error: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 조회 실패: " + e.getMessage()); // 조회 실패
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 조회 실패: " + e.getMessage());//조회 실패
         }//try-catch end
-    }//getAllTodo
+    }//getAllTodo end
 
     @PutMapping("nextodo/complete")//할일 완료
     public ResponseEntity<?> completeTodo(@RequestBody List<Long> todoId) {
         log.info("TodoController.completeTodo & TodoId = " + todoId);
-        try {
-            // 여러 개의 Todo 아이디로 완료 상태를 업데이트
+        try { // 여러 개의 Todo 아이디로 완료 상태를 업데이트
             todoService.completeTodos(todoId);
             return ResponseEntity.ok("Todo 완료 상태 업데이트 완료");
-        } catch (Exception e) {
+        }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Todo 완료 상태 업데이트 실패: " + e.getMessage());
-        }
-    }
+        }//try-catch end
+    }//completeTodo end
 
-}
+}//class end

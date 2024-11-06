@@ -22,5 +22,6 @@ public class UserDTO {
         userDTO.setUserPassword(users.getUserPassword());
         userDTO.setUserName(users.getUserName());
         return userDTO;
-    }
-}
+    }//toUserDTO end
+
+}//class end

@@ -31,5 +31,6 @@ public class TodoDTO {
         todoDTO.setStartDate(todo.getStartDate());
         todoDTO.setEndDate(todo.getEndDate());
         return todoDTO;
-    }
-}
+    }//toTodoDTO end
+
+}//class end
