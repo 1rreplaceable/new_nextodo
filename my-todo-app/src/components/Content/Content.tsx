@@ -126,7 +126,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                         {todos.map((todo) => (
                             <li key={todo.id} className="border-b py-4 hover:bg-gray-100">
                                 <button className="text-left w-full flex justify-between items-center" onClick={() => openModal(todo)}>
-                                    <div className="flex">
+                                    <div className="flex items-center">
                                         <div
                                             className={`mr-4 text-sm pl-0 w-10 ${
                                                 getStatusLabel(todo) === "완료"
@@ -168,7 +168,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                         {todos
                             .filter((todo) => getStatusLabel(todo) === "진행중")
                             .map((todo) => (
-                                <li key={todo.id} className="border-b py-2 flex items-center">
+                                <li key={todo.id} className="border-b py-4 flex items-center">
                                     <input
                                         type="checkbox"
                                         // checked={selectedTodos.includes(todo.id)} // 개별적으로 체크 상태 관리
@@ -179,20 +179,23 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                         className="text-left flex-1"
                                         onClick={() => openModal(todo)}
                                     >
-                                        <span className="font-bold">{todo.title}</span>
-                                        <span className="ml-2 text-sm text-gray-500">진행중</span>
+                                        <div className="flex items-center">
+                                            <div className="mr-4 text-sm pl-0 w-10 text-gray-500">진행중</div>
+                                            <span className="font-bold">{todo.title}</span>
+                                        </div>
+
                                     </button>
                                 </li>
                             ))}
                     </ul>
-                        <div className="flex justify-end mt-4">
-                            <button
-                                onClick={handleComplete}
-                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            >
-                                완료
-                            </button>
-                        </div>
+                    <div className="flex justify-end mt-4">
+                        <button
+                            onClick={handleComplete}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                        >
+                            완료
+                        </button>
+                    </div>
                 </>
             )}
 
@@ -273,14 +276,15 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                         {todos
                             .filter((todo) => getStatusLabel(todo) === "완료")
                             .map((todo) => (
-                                <li key={todo.id} className="border-b py-2">
+                                <li key={todo.id} className="border-b py-4">
                                     <button className="text-left w-full flex justify-between items-center"
                                             onClick={() => openModal(todo)}>
-                                        <div>
+                                        <div className="flex items-center">
+                                            <span className="mr-4 text-sm pl-0 w-10 text-green-500">완료</span>
                                             <span className="font-bold">{todo.title}</span>
-                                            <span className="ml-2 text-sm text-green-500">완료</span>
                                         </div>
-                                        <span className="text-sm text-gray-500">{new Date(todo.endDate).toISOString().split("T")[0]}</span>
+                                        <span
+                                            className="text-sm text-gray-500">{new Date(todo.endDate).toISOString().split("T")[0]}</span>
                                     </button>
                                 </li>
                             ))}
@@ -290,16 +294,16 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
 
             {isModalOpen && selectedTodo && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                        <div className="bg-white w-1/2 p-6 rounded-lg shadow-lg relative">
-                            <button
-                                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-                                onClick={closeModal}
-                            >
-                                &times;
-                            </button>
-                            <h2 className="text-xl font-bold mb-4">{selectedTodo.title}</h2>
-                            <p><strong>완료 여부:</strong> {getStatusLabel(selectedTodo)}</p>
-                            <p>
+                    <div className="bg-white w-1/2 p-6 rounded-lg shadow-lg relative">
+                        <button
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                            onClick={closeModal}
+                        >
+                            &times;
+                        </button>
+                        <h2 className="text-xl font-bold mb-4">{selectedTodo.title}</h2>
+                        <p><strong>완료 여부:</strong> {getStatusLabel(selectedTodo)}</p>
+                        <p>
                                 <strong>시작일:</strong> {selectedTodo.startDate ? new Date(selectedTodo.startDate).toLocaleDateString() : "미정"}
                             </p>
                             <p>
