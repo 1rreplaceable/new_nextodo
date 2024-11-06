@@ -57,10 +57,10 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
     const openModal = (todo: Todo) => {
         setSelectedTodo(todo);
         setIsModalOpen(true);
-        fetch(`http://localhost:8081/nextodo/comments?todoId=${todo.id}`)
-            .then((res) => res.json())
-            .then((data) => setComments(data))
-            .catch((error) => console.error("Error fetching comments:", error));
+        // fetch(`http://localhost:8081/nextodo/comments?todoId=${todo.id}`)
+        //     .then((res) => res.json())
+        //     .then((data) => setComments(data))
+        //     .catch((error) => console.error("Error fetching comments:", error));
     };
 
     const closeModal = () => {
@@ -128,15 +128,30 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                 <button className="text-left w-full flex justify-between items-center" onClick={() => openModal(todo)}>
                                     <div>
                                         <span className="font-bold">{todo.title}</span>
-                                        <span className={`ml-2 text-sm ${getStatusLabel(todo) === "완료" ? "text-green-500" : "text-gray-500"}`}>
-                                {getStatusLabel(todo)}
-                            </span>
-                                    </div>
+                                        <span
+                                            className={`ml-2 text-sm ${
+                                            getStatusLabel(todo) === "완료"
+                                                ? "text-green-500"
+                                                : getStatusLabel(todo) === "진행전"
+                                                    ? "text-blue-500"
+                                                    : "text-gray-500"
+                                        }`}
+                                            >
+                                            {getStatusLabel(todo)}
+                                    </span>
+                                </div>
+                                <div>
+                                    {getStatusLabel(todo) === "진행전" && (
+                                        <span className="text-sm text-blue-500 mr-4">
+                                            {new Date(todo.startDate).toISOString().split("T")[0]}
+                                        </span>
+                                    )}
                                     {todo.endDate && (
                                         <span className="text-sm text-gray-500">
                                             {new Date(todo.endDate).toISOString().split("T")[0]}
                                         </span>
                                     )}
+                                    </div>
                                 </button>
                             </li>
                         ))}
@@ -284,8 +299,13 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                             </button>
                             <h2 className="text-xl font-bold mb-4">{selectedTodo.title}</h2>
                             <p><strong>완료 여부:</strong> {getStatusLabel(selectedTodo)}</p>
-                            {/*<p><strong>시작일:</strong> {selectedTodo.startDate || "미정"}</p>*/}
-                            {/*<p><strong>종료일:</strong> {selectedTodo.endDate || "미정"}</p>*/}
+                            <p>
+                                <strong>시작일:</strong> {selectedTodo.startDate ? new Date(selectedTodo.startDate).toLocaleDateString() : "미정"}
+                            </p>
+                            <p>
+                                <strong>종료일:</strong> {selectedTodo.endDate ? new Date(selectedTodo.endDate).toLocaleDateString() : "미정"}
+                            </p>
+
 
                             {/* 댓글 섹션 */}
                             <div className="mt-6">
@@ -329,11 +349,8 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                     }).then((newComment) => {
                                         setComments((prevComments) => [...prevComments, newComment]);
                                         alert("댓글이 입력되었습니다!");
-                                        setCommentText("");
-                                    }).catch((error) => {
-                                        console.error("일정 추가 오류:", error);
-                                        alert("댓글 입력에 실패했습니다.");
-                                    });
+                                    })
+                                    setCommentText("");
                                 }}
                                 className="mt-4"
                             >
