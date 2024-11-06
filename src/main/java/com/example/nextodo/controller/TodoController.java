@@ -27,12 +27,9 @@ public class TodoController {
             session.setAttribute("loginEmail", addTodoResult.getTodoId());
             log.info("일정추가 성공");
             return ResponseEntity.ok(addTodoResult);//성공적으로 추가된 TodoDTO 반환
-        } catch (IllegalArgumentException e) {
+        }catch (RuntimeException e) {
             log.error("Error: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자를 찾을 수 없습니다: " + e.getMessage());  // 사용자 미존재
-        } catch (RuntimeException e) {
-            log.error("Error: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 추가 실패: " + e.getMessage());  // Todo 저장 실패
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("일정 추가 실패: " + e.getMessage());//투두 저장 실패
         }//trt-catch end
     }//addTodo end
 

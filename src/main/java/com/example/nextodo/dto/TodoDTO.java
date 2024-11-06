@@ -1,13 +1,11 @@
 package com.example.nextodo.dto;
 
 import com.example.nextodo.entity.Todo;
-import com.example.nextodo.entity.Users;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
 import java.sql.Date;
 
 @Slf4j

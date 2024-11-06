@@ -22,7 +22,7 @@ public class TodoService {
 
     public TodoDTO addTodo(TodoDTO todoDTO){
         log.info("TodoService.addTodo method = " + todoDTO);
-        // userId로 Users 엔티티 조회
+        //userId로 Users 엔티티 조회
         //.orElseThrow()는 Optional메서드. Optional안에 값이 존재하면 그 값을 반환하고, 존재하지 않으면 지정된 예외를 던진다.
         //여기서는 Optional안에 Users엔터티가 존재하지 않을 경우 IllegalArgumentException을 던지도록 설정
         //여기서는 필요없을 수도 있음. 나중에 삭제 여부 결정 >> 필요함. 외래키 문제 해결하기 위해. 정확한 이유는,....
@@ -42,9 +42,9 @@ public class TodoService {
         log.info("TodoService.getAllTodo & userId : " + userId);
         // userId로 Users 엔티티 조회
         Users user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        // 해당 User의 Todo 목록 조회
+        //해당 User의 Todo 목록 조회
         List<Todo> todos = todoRepository.findByUser(user, Sort.by(Sort.Order.desc("endDate")));
-        // Todo 목록을 TodoDTO로 변환하여 반환
+        //투두 목록을 TodoDTO로 변환하여 반환
         return todos.stream().map(TodoDTO::toTodoDTO).collect(Collectors.toList());
     }//getAllTodo end
 
@@ -53,7 +53,7 @@ public class TodoService {
         for (Todo todo : todosToUpdate) {//선택된 모든 항목 완료 상태로 변경
             todo.setComplete("true");
         }//for end
-        todoRepository.saveAll(todosToUpdate);  // 변경된 Todo 목록을 저장
+        todoRepository.saveAll(todosToUpdate);//변경된 투두 목록을 저장
     }//completeTodos end
 
 }//class end
