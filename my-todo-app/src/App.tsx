@@ -10,7 +10,7 @@ type AuthView = "login" | "signup" | null;
 
 const App: React.FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [authView, setAuthView] = useState<AuthView>(null);
+    const [authView, setAuthView] = useState<AuthView>("login");
     const [selectedView, setSelectedView] = useState("Today");
     const [userName, setUserName] = useState("");
     const [userId, setUserId] = useState<number>(1);
