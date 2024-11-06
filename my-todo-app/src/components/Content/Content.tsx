@@ -250,7 +250,7 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
                                             <span className="font-bold">{todo.title}</span>
                                             <span className="ml-2 text-sm text-green-500">완료</span>
                                         </div>
-                                        <span className="text-sm text-gray-500">{todo.endDate}</span>
+                                        <span className="text-sm text-gray-500">{new Date(todo.endDate).toISOString().split("T")[0]}</span>
                                     </button>
                                 </li>
                             ))}
