@@ -2,6 +2,7 @@ package com.example.nextodo.controller;
 
 import com.example.nextodo.dto.MemberDTO;
 import com.example.nextodo.service.MemberService;
+import com.example.nextodo.service.TodoService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final TodoService todoService;
 
     @PostMapping("nextodo/addmember")//친구 추가(멤버 추가)
     public ResponseEntity<?> addMembers(@RequestBody MemberDTO memberDTO, HttpSession session){

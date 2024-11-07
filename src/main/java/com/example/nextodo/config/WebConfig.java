@@ -16,9 +16,9 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:5173") // Vite 개발 서버 주소 허용
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")// 모든 HTTP 메서드 허용 (GET, POST 등)
+                        .allowedHeaders("*")// 모든 헤더 허용
+                        .allowCredentials(true);// 인증 정보 (쿠키 등) 허용
             }
         };
     }

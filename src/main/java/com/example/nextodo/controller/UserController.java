@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +42,26 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");//오류 메시지를 JSON 형식으로 반환
         }//if-else end
     }//login end
+
+    @GetMapping("nextodo/getallusers")
+    public ResponseEntity<?> getAllUsers(@RequestParam Long userId){//그룹 멤버 추가 시 전체 사용자 불러오기
+        log.info("MemberController.getAllUsers");
+        try{
+            List<UserDTO> allUserList = userService.getAllUsers(userId);
+            log.info("allUserList = " + allUserList);
+
+            // 현재 사용자를 제외한 목록으로 필터링
+            List<UserDTO> filteredUserList = allUserList.stream()
+                    .filter(user -> !user.getUserId().equals(userId)) // userId가 현재 사용자와 다르면 필터링
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(allUserList);
+        }catch(Exception e){
+            log.error("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("전체 사용자 조회 실패: " + e.getMessage());//조회 실패
+        }//try-catch end
+
+    }
 
 }//class end
 //세션이란?
