@@ -40,7 +40,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
 
     useEffect(() => {
         if (isModalOpen) {
-            fetch(`http://localhost:8081/nextodo/getallusers`)
+            fetch(`http://localhost:8081/nextodo/getallusers?userId=${userId}`)
                 .then((res) => {
                     if (!res.ok) {
                         throw new Error("모든 회원 정보를 불러오는 데 실패했습니다.");
@@ -158,13 +158,13 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                             className="w-full p-2 border rounded-md mb-4"
                             list="member-options"
                         />
-                        <datalist id="member-options">
+                        <div id="member-options">
                             {allMembers.map((member) => (
                                 <div key={member.userId}>
                                     name: {member.userName} email:({member.userEmail})
                                 </div>
                             ))}
-                        </datalist>
+                        </div>
                         <button
                             className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                             onClick={handleAddMember}
