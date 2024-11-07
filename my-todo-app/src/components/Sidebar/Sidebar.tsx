@@ -12,10 +12,17 @@ type Member = {
     memberName: string;
 }
 
+type User = {
+    userId: number;
+    userEmail: string;
+    userName: string;
+}
+
 const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) => {
     const [members, setMembers] = useState<Member[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newMemberName, setNewMemberName] = useState("");
+    const [allMembers, setAllMembers] = useState<User[]>([]);
 
     useEffect(() => {
         if (userId) {
@@ -30,6 +37,20 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 .catch((error) => console.error("Error fetching members:", error));
         }
     }, [userId]);
+
+    useEffect(() => {
+        if (isModalOpen) {
+            fetch(`http://localhost:8081/nextodo/getallusers`)
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new Error("모든 회원 정보를 불러오는 데 실패했습니다.");
+                    }
+                    return res.json();
+                })
+                .then((data) => setAllMembers(data))
+                .catch((error) => console.error("Error fetching all members:", error));
+        }
+    }, [isModalOpen]);
 
     // 멤버 추가 함수
     const handleAddMember = () => {
@@ -74,7 +95,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                         onClick={() => setSelectedView("Today")}
                     >
                         <span>📅</span>
-                        <span>오늘 할 일</span>
+                        <span>남은 할 일</span>
                     </button>
                 </li>
                 <li>
@@ -135,7 +156,15 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                             onChange={(e) => setNewMemberName(e.target.value)}
                             placeholder="멤버 이름"
                             className="w-full p-2 border rounded-md mb-4"
+                            list="member-options"
                         />
+                        <datalist id="member-options">
+                            {allMembers.map((member) => (
+                                <div key={member.userId}>
+                                    name: {member.userName} email:({member.userEmail})
+                                </div>
+                            ))}
+                        </datalist>
                         <button
                             className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                             onClick={handleAddMember}

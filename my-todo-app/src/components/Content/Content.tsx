@@ -70,15 +70,19 @@ console.log(todos, 't')
     };
     const getStatusLabel = (todo: Todo) => {
         const startDate = todo.startDate ? new Date(todo.startDate).toISOString().split("T")[0] : null;
-        const endDate = todo.endDate ? new Date(todo.endDate).toISOString().split("T")[0] : null;
+        const endDate = todo.startDate ? new Date(todo.endDate).toISOString().split("T")[0] : null;
+
         if (todo.complete === "true") {
             return "완료";
-        } else if (startDate && today < startDate) {
-            return "진행전";
-        } else if (startDate && endDate && startDate <= today && today <= endDate) {
-            return "진행중";
+        } else if(todo.complete === "false") {
+            if (startDate && today < startDate) {
+                return "진행전";
+            } else if (endDate && today > endDate) {
+                return "기한만료"
+            } else {
+                return "진행중";
+            }
         }
-        return "상태 없음";
     };
     const handleCheckboxChange = (id: number) => {
       if(selectedTodos.includes(id)) {
@@ -120,18 +124,20 @@ console.log(todos, 't')
             {selectedView === "AllTasks" && (
                 <>
                     <h1 className="text-2xl font-bold mb-4">모든 일정</h1>
-                    <ul className="">
+                    <ul>
                         {todos.map((todo) => (
                             <li key={todo.todoId} className="border-b py-4 hover:bg-gray-100">
                                 <button className="text-left w-full flex justify-between items-center" onClick={() => openModal(todo)}>
                                     <div className="flex items-center">
                                         <div
-                                            className={`mr-4 text-sm pl-0 w-10 ${
+                                            className={`mr-4 text-sm pl-0 w-14 ${
                                                 getStatusLabel(todo) === "완료"
                                                     ? "text-green-500"
                                                     : getStatusLabel(todo) === "진행전"
                                                         ? "text-blue-500"
-                                                        : "text-gray-500"
+                                                        : getStatusLabel(todo) === "기한만료"
+                                                            ? "text-red-500"
+                                                            : "text-gray-500"
                                             }`}
                                         >
                                             {getStatusLabel(todo)}
@@ -160,28 +166,34 @@ console.log(todos, 't')
             {selectedView === "Today" && (
                 <>
                     <h1 className="text-2xl font-bold mb-4">
-                        {selectedMember ? {}+`'s 오늘 할 일` : "오늘 할 일"}
+                        {selectedMember ? {}+`'s 남은 할 일` : "남은 할 일"}
                     </h1>
-                    <ul className="space-y-2">
+                    <ul>
                         {todos
-                            .filter((todo) => getStatusLabel(todo) === "진행중")
+                            .filter((todo) => getStatusLabel(todo) === "진행중" || getStatusLabel(todo) === "기한만료")
                             .map((todo) => (
-                                <li key={todo.todoId} className="border-b py-4 flex items-center">
+                                <li key={todo.todoId} className="border-b py-4 hover:bg-gray-100 flex items-center">
                                     <input
                                         type="checkbox"
-                                        checked={selectedTodos.includes(todo.todoId)} // 개별적으로 체크 상태 관리
+                                        checked={selectedTodos.includes(todo.todoId)}
                                         onChange={() => handleCheckboxChange(todo.todoId)}
                                         className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
                                     />
-                                    <button
-                                        className="text-left flex-1"
+                                    <button className="text-left w-full flex justify-between items-center"
                                         onClick={() => openModal(todo)}
                                     >
                                         <div className="flex items-center">
-                                            <div className="mr-4 text-sm pl-0 w-10 text-gray-500">진행중</div>
+                                            <div className={`mr-4 text-sm pl-0 w-14 text-gray-500 ${
+                                                getStatusLabel(todo) === "진행전"
+                                                    ? "text-blue-500"
+                                                    : getStatusLabel(todo) === "기한만료"
+                                                        ? "text-red-500"
+                                                        : "text-gray-500"
+                                            }`}>{getStatusLabel(todo)}</div>
                                             <span className="font-bold">{todo.title}</span>
                                         </div>
-
+                                        <span
+                                            className="text-sm text-gray-500">{new Date(todo.endDate).toISOString().split("T")[0]}</span>
                                     </button>
                                 </li>
                             ))}
@@ -270,11 +282,11 @@ console.log(todos, 't')
             {selectedView === "Completed" && (
                 <>
                     <h1 className="text-2xl font-bold mb-4">완료한 일정</h1>
-                    <ul className="space-y-2">
+                    <ul>
                         {todos
                             .filter((todo) => getStatusLabel(todo) === "완료")
                             .map((todo) => (
-                                <li key={todo.todoId} className="border-b py-4">
+                                <li key={todo.todoId} className="border-b py-4 hover:bg-gray-100">
                                     <button className="text-left w-full flex justify-between items-center"
                                             onClick={() => openModal(todo)}>
                                         <div className="flex items-center">
