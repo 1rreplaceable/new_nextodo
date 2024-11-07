@@ -137,7 +137,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                         +
                     </button>
                 </div>
-                <ul className="space-y-4">
+                <ul className="space-y-4 mt-2">
                     {members.map((member) => (
                         <li key={member.memberName} className="relative group">
                             <button
@@ -154,7 +154,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                                 <span>{member.memberName}</span>
                             </button>
                             <button
-                                className="absolute top-0 right-2 text-gray-400 hover:text-red-500 hidden group-hover:block"
+                                className="absolute font-semibold top-0 right-2 text-gray-400 hover:text-red-500 hidden group-hover:block"
                                 // onClick={}
                             >
                                 &#10005;
