@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<Users, Long> {
     //이메일로 회원 정보 조회(select * from user where user_email=?)
     Optional<Users> findByUserEmail(String userEmail);
+    //멤버의 이름으로 회원 ID 찾기
+    Optional<Users> findByUserName(String UserName);
 }//interface end

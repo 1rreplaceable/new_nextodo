@@ -48,6 +48,6 @@ public class UserService {
                 .filter(user -> !user.getUserId().equals(userId)) // 현재 userId와 일치하지 않는 사용자만 필터링
                 .map(UserDTO::toUserDTO) // 필터링된 Users 객체를 UserDTO로 변환
                 .collect(Collectors.toList());
-    }
+    }//getAllUsers end
 
 }//class end

@@ -56,4 +56,13 @@ public class TodoService {
         todoRepository.saveAll(todosToUpdate);//변경된 투두 목록을 저장
     }//completeTodos end
 
+    public List<TodoDTO> getMemberTodo(String memberName){
+        Users selectMemberId = userRepository.findByUserName(memberName).orElseThrow(() -> new IllegalArgumentException("User not found"));//선택한 멤버의 이름으로 해당 회원의 사용자 ID찾기
+        log.info("Select members Id : " + selectMemberId);
+
+        List<Todo> membersTodo = todoRepository.findByUser(selectMemberId,Sort.by(Sort.Order.desc("endDate")));
+
+        return membersTodo.stream().map(TodoDTO::toTodoDTO).collect(Collectors.toList());
+    }//getMemberTodo end
+
 }//class end

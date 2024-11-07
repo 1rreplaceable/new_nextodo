@@ -61,7 +61,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("전체 사용자 조회 실패: " + e.getMessage());//조회 실패
         }//try-catch end
 
-    }
+    }//getAllUsers end
 
 }//class end
 //세션이란?
