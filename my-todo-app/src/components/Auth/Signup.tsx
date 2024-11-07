@@ -10,23 +10,42 @@ const SignUp = ({ onSignUp }: SignUpProps) => {
     const [userEmail, setUserEmail] = useState("");
     const [userName, setUserName] = useState("");
     const [userPassword, setUserPassword] = useState("");
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const emailCheck =
+        /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    const emailValid = emailCheck.test(userEmail);
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        fetch(URL,{
-            method:'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                userEmail: userEmail,
-                userName: userName,
-                userPassword: userPassword,
-            }),
-        }).then(res => res.json());
-        alert("회원가입이 완료되었습니다.");
-        onSignUp();
+        if (emailValid) {
+            try {
+                const response = await fetch(URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userEmail: userEmail,
+                        userName: userName,
+                        userPassword: userPassword,
+                    }),
+                });
+                if (response.ok) {
+                    alert("회원가입이 완료되었습니다.");
+                    onSignUp();
+                } else {
+                    alert("회원가입에 실패했습니다. 다시 시도해주세요.");
+                }
+            } catch (error) {
+                console.error("Error during sign-up:", error);
+                alert("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+            }
+        } else {
+            alert("아이디 형식을 이메일로 해주세요.");
+            setUserName("");
+            setUserEmail("");
+            setUserPassword("");
+        }
     };
+
 
     return (
         <div className="flex items-center flex-col">

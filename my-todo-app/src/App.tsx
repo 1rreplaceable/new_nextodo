@@ -41,7 +41,6 @@ const App: React.FC = () => {
         sessionStorage.removeItem("userId");
         sessionStorage.removeItem("userName");
     };
-    console.log(sessionStorage.getItem("userName"));
     return (
         <div className="flex flex-col h-screen">
             <Nav

@@ -9,11 +9,10 @@ type Todo = {
     endDate: Date;
 }
 
-type Comment = {
-    id: number;
+type Comments = {
     text: string;
     writer: string;
-    userId: number;
+    todoId: number;
 }
 
 type ContentProps = {
@@ -27,40 +26,56 @@ const Content = ({ selectedView, selectedMember, userId, userName }: ContentProp
     const [todos, setTodos] = useState<Todo[]>([]);
     const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
     const [selectedTodos, setSelectedTodos] = useState<number[]>([]);
-    const [comments, setComments] = useState<Comment[]>([]);
+    const [comments, setComments] = useState<Comments[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [title, setTitle] = useState("");
     const today = new Date().toISOString().split("T")[0];
     const [startDate, setStartDate] = useState(today);
     const [endDate, setEndDate] = useState(today);
     const [commentText, setCommentText] = useState("");
-console.log(todos, 't')
-    const targetUserId = selectedMember || userId;
+    const targetUserId = userId;
 
     useEffect(() => {
-        fetch(`http://localhost:8081/nextodo/getalltodo?userId=${targetUserId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error("일정을 불러오는 데 실패했습니다.");
-                }
-                return res.json();
+        if (selectedMember !== "") {
+            fetch(`http://localhost:8081/nextodo/getmemberstodo?memberName=${selectedMember}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
             })
-            .then((data) => setTodos(data))
-            .catch((error) => console.error("데이터 불러오기 에러:", error));
-    }, [targetUserId, selectedView]);
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new Error("멤버 일정을 불러오는 데 실패했습니다.");
+                    }
+                    return res.json();
+                })
+                .then((data) => setTodos(data))
+                .catch((error) => console.error("데이터 불러오기 에러:", error));
+        } else {
+            fetch(`http://localhost:8081/nextodo/getalltodo?userId=${targetUserId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((res) => {
+                    if (!res.ok) {
+                        throw new Error("일정을 불러오는 데 실패했습니다.");
+                    }
+                    return res.json();
+                })
+                .then((data) => setTodos(data))
+                .catch((error) => console.error("데이터 불러오기 에러:", error));
+        }
+    }, [selectedMember, selectedView]);
 
     const openModal = (todo: Todo) => {
         setSelectedTodo(todo);
         setIsModalOpen(true);
-        // fetch(`http://localhost:8081/nextodo/comments?todoId=${todo.id}`)
-        //     .then((res) => res.json())
-        //     .then((data) => setComments(data))
-        //     .catch((error) => console.error("Error fetching comments:", error));
+        fetch(`http://localhost:8081/nextodo/getcomments?todoId=${todo.todoId}`)
+            .then((res) => res.json())
+            .then((data) => setComments(data))
+            .catch((error) => console.error("Error fetching comments:", error));
     };
 
     const closeModal = () => {
@@ -166,46 +181,59 @@ console.log(todos, 't')
             {selectedView === "Today" && (
                 <>
                     <h1 className="text-2xl font-bold mb-4">
-                        {selectedMember ? {}+`'s 남은 할 일` : "남은 할 일"}
+                        {selectedMember ? `${selectedMember}'s 남은 할 일` : "남은 할 일"}
                     </h1>
-                    <ul>
-                        {todos
-                            .filter((todo) => getStatusLabel(todo) === "진행중" || getStatusLabel(todo) === "기한만료")
-                            .map((todo) => (
-                                <li key={todo.todoId} className="border-b py-4 hover:bg-gray-100 flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedTodos.includes(todo.todoId)}
-                                        onChange={() => handleCheckboxChange(todo.todoId)}
-                                        className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
-                                    />
-                                    <button className="text-left w-full flex justify-between items-center"
-                                        onClick={() => openModal(todo)}
+                    {todos.filter((todo) => getStatusLabel(todo) === "진행중" || getStatusLabel(todo) === "기한만료").length > 0 ? (
+                        <>
+                            <ul>
+                                {todos
+                                    .filter((todo) => getStatusLabel(todo) === "진행중" || getStatusLabel(todo) === "기한만료")
+                                    .map((todo) => (
+                                        <li key={todo.todoId} className="border-b py-4 hover:bg-gray-100 flex items-center">
+                                            {selectedMember === "" && (
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedTodos.includes(todo.todoId)}
+                                                    onChange={() => handleCheckboxChange(todo.todoId)}
+                                                    className="w-4 h-4 text-blue-600 mr-2 bg-gray-100 border-gray-300 rounded"
+                                                />
+                                            )}
+                                            <button className="text-left w-full flex justify-between items-center"
+                                                    onClick={() => openModal(todo)}
+                                            >
+                                                <div className="flex items-center">
+                                                    <div className={`mr-4 text-sm pl-0 w-14 text-gray-500 ${
+                                                        getStatusLabel(todo) === "진행전"
+                                                            ? "text-blue-500"
+                                                            : getStatusLabel(todo) === "기한만료"
+                                                                ? "text-red-500"
+                                                                : "text-gray-500"
+                                                    }`}>{getStatusLabel(todo)}</div>
+                                                    <span className="font-bold">{todo.title}</span>
+                                                </div>
+                                                <span
+                                                    className="text-sm text-gray-500">{new Date(todo.endDate).toISOString().split("T")[0]}</span>
+                                            </button>
+                                        </li>
+                                    ))}
+                            </ul>
+                            {selectedMember === "" && (
+                                <div className="flex justify-end mt-4">
+                                    <button
+                                        onClick={handleComplete}
+                                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                                     >
-                                        <div className="flex items-center">
-                                            <div className={`mr-4 text-sm pl-0 w-14 text-gray-500 ${
-                                                getStatusLabel(todo) === "진행전"
-                                                    ? "text-blue-500"
-                                                    : getStatusLabel(todo) === "기한만료"
-                                                        ? "text-red-500"
-                                                        : "text-gray-500"
-                                            }`}>{getStatusLabel(todo)}</div>
-                                            <span className="font-bold">{todo.title}</span>
-                                        </div>
-                                        <span
-                                            className="text-sm text-gray-500">{new Date(todo.endDate).toISOString().split("T")[0]}</span>
+                                        완료
                                     </button>
-                                </li>
-                            ))}
-                    </ul>
-                    <div className="flex justify-end mt-4">
-                        <button
-                            onClick={handleComplete}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                        >
-                            완료
-                        </button>
-                    </div>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className="text-center text-gray-500 py-4">
+                            남은 할 일이 없습니다.
+                        </div>
+                    )}
+
                 </>
             )}
 
@@ -214,37 +242,42 @@ console.log(todos, 't')
                     <h1 className="text-2xl font-bold mb-4">일정 추가하기</h1>
                     <form
                         onSubmit={(e) => {
-                            e.preventDefault();
-                            fetch("http://localhost:8081/nextodo/addtodo", {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                    userId: userId,
-                                    complete: false,
-                                    title: title,
-                                    startDate: startDate,
-                                    endDate: endDate,
-                                }),
-                            })
-                                .then((res) => {
-                                    if (!res.ok) {
-                                        throw new Error("일정 추가에 실패했습니다.");
-                                    }
-                                    return res.json();
+                            if (title !== "") {
+                                e.preventDefault();
+                                fetch("http://localhost:8081/nextodo/addtodo", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                        userId: userId,
+                                        complete: false,
+                                        title: title,
+                                        startDate: startDate,
+                                        endDate: endDate,
+                                    }),
                                 })
-                                .then((newTodo) => {
-                                    setTodos((prevTodos) => [...prevTodos, newTodo]); // 새로운 일정 추가
-                                    alert("일정이 추가되었습니다!");
-                                    setTitle("");
-                                    setStartDate(today);
-                                    setEndDate(today);
-                                })
-                                .catch((error) => {
-                                    console.error("일정 추가 오류:", error);
-                                    alert("일정 추가에 실패했습니다.");
-                                });
+                                    .then((res) => {
+                                        if (!res.ok) {
+                                            throw new Error("일정 추가에 실패했습니다.");
+                                        }
+                                        return res.json();
+                                    })
+                                    .then((newTodo) => {
+                                        setTodos((prevTodos) => [...prevTodos, newTodo]); // 새로운 일정 추가
+                                        alert("일정이 추가되었습니다!");
+                                        setTitle("");
+                                        setStartDate(today);
+                                        setEndDate(today);
+                                    })
+                                    .catch((error) => {
+                                        console.error("일정 추가 오류:", error);
+                                        alert("일정 추가에 실패했습니다.");
+                                    });
+                            } else {
+                                alert("할 일 제목을 입력해주세요.");
+
+                            }
                         }}
                         className="space-y-4"
                     >
@@ -304,7 +337,7 @@ console.log(todos, 't')
 
             {isModalOpen && selectedTodo && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white w-1/2 p-6 rounded-lg shadow-lg relative">
+                    <div className="bg-white w-1/2 p-6 rounded-lg shadow-lg relative max-h-fit">
                         <button
                             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                             onClick={closeModal}
@@ -326,7 +359,7 @@ console.log(todos, 't')
                                 <h3 className="text-lg font-semibold mb-4">Comments</h3>
                                 <ul className="space-y-4">
                                     {comments.map((comment) => (
-                                        <li key={comment.userId} className="flex items-start space-x-4">
+                                        <li key={comment.todoId} className="flex items-start space-x-4">
                                             <div
                                                 className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
                                                 {comment.writer.charAt(0).toUpperCase()}
@@ -344,8 +377,7 @@ console.log(todos, 't')
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
-                                    setComments([...comments, {id: 1, text: commentText, writer: userName, userId: userId}]);
-                                    fetch("http://localhost:8081/nextodo/todos/comment", {
+                                    fetch("http://localhost:8081/nextodo/writecomment", {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
@@ -353,7 +385,7 @@ console.log(todos, 't')
                                         body: JSON.stringify({
                                             text: commentText,
                                             writer: userName,
-                                            userId: userId,
+                                            todoId: selectedTodo?.todoId,
                                         }),
                                     }).then((res) => {
                                         if (!res.ok) {

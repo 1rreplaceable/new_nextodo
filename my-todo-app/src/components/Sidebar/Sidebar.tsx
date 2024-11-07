@@ -51,6 +51,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 .catch((error) => console.error("Error fetching all members:", error));
         }
     }, [isModalOpen]);
+
     // 멤버 추가 함수
     const handleAddMember = (memberName: string) => {
         fetch("http://localhost:8081/nextodo/addmember", {
@@ -66,6 +67,11 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
             })
             .catch((error) => console.error("멤버 추가 에러:", error));
     };
+
+    const isMemberAlreadyAdded = (userName: string) => {
+        return members.some(member => member.memberName === userName);
+    };
+
     return (
         <aside className="w-1/5 bg-gray-100 p-4 shadow-md">
             {/* 일정 섹션 */}
@@ -73,7 +79,10 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 <li>
                     <button
                         className="flex items-center space-x-3 p-2 w-full rounded-md text-gray-800 hover:bg-gray-200 transition-colors"
-                        onClick={() => setSelectedView("AddTask")}
+                        onClick={() => {
+                            setSelectedView("AddTask");
+                            setSelectedMember("");
+                        }}
                     >
                         <span>➕</span>
                         <span>일정 추가하기</span>
@@ -82,7 +91,10 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 <li>
                     <button
                         className="flex items-center space-x-3 p-2 w-full rounded-md text-gray-800 hover:bg-gray-200 transition-colors"
-                        onClick={() => setSelectedView("AllTasks")}
+                        onClick={() => {
+                            setSelectedView("AllTasks");
+                            setSelectedMember("");
+                        }}
                     >
                         <span>📂</span>
                         <span>모든 일정</span>
@@ -91,7 +103,10 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 <li>
                     <button
                         className="flex items-center space-x-3 p-2 w-full rounded-md text-gray-800 hover:bg-gray-200 transition-colors"
-                        onClick={() => setSelectedView("Today")}
+                        onClick={() =>{
+                            setSelectedView("Today");
+                            setSelectedMember("");
+                    }}
                     >
                         <span>📅</span>
                         <span>남은 할 일</span>
@@ -100,7 +115,10 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 <li>
                     <button
                         className="flex items-center space-x-3 p-2 w-full rounded-md text-gray-800 hover:bg-gray-200 transition-colors"
-                        onClick={() => setSelectedView("Completed")}
+                        onClick={() => {
+                            setSelectedView("Completed");
+                            setSelectedMember("");
+                        }}
                     >
                         <span>✅</span>
                         <span>완료한 일정</span>
@@ -121,7 +139,7 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 </div>
                 <ul className="space-y-4">
                     {members.map((member) => (
-                        <li key={member.memberName}>
+                        <li key={member.memberName} className="relative group">
                             <button
                                 className="flex items-center space-x-3 p-2 w-full rounded-md text-gray-800 hover:bg-gray-200 transition-colors"
                                 onClick={() => {
@@ -135,9 +153,16 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                                 </div>
                                 <span>{member.memberName}</span>
                             </button>
+                            <button
+                                className="absolute top-0 right-2 text-gray-400 hover:text-red-500 hidden group-hover:block"
+                                // onClick={}
+                            >
+                                &#10005;
+                            </button>
                         </li>
                     ))}
                 </ul>
+
             </div>
             {/* 모달 */}
             {isModalOpen && (
@@ -158,7 +183,8 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                             className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             list="member-options"
                         />
-                        <div id="member-options" className="max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2 mb-4">
+                        <div id="member-options"
+                             className="max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2 mb-4">
                             {allMembers.length > 0 ? (
                                 <ul className="space-y-2">
                                     {allMembers
@@ -166,11 +192,11 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                                         .map((member) => (
                                             <li
                                                 key={member.userId}
-                                                className="flex justify-between p-2 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"
-                                                onClick={() => handleAddMember(member.userName)}
+                                                className={`flex justify-between p-2 rounded-md cursor-pointer ${isMemberAlreadyAdded(member.userName) ? 'bg-gray-300 text-gray-400 cursor-not-allowed' : 'bg-gray-50 hover:bg-gray-100 text-gray-800'}`}
+                                                onClick={() => !isMemberAlreadyAdded(member.userName) && handleAddMember(member.userName)}
                                             >
-                                                <div className="font-medium text-gray-800">{member.userName}</div>
-                                                <div className="text-gray-500 text-sm w-40">{member.userEmail}</div>
+                                                <div className="font-medium">{member.userName}</div>
+                                                <div className="text-sm w-40">{member.userEmail}</div>
                                             </li>
                                         ))}
                                 </ul>
@@ -187,8 +213,6 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                     </div>
                 </div>
             )}
-
-
         </aside>
     );
 };
