@@ -21,7 +21,7 @@ type User = {
 const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) => {
     const [members, setMembers] = useState<Member[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [newMemberName, setNewMemberName] = useState("");
+    const [searchMember, setSearchMember] = useState("");
     const [allMembers, setAllMembers] = useState<User[]>([]);
 
     useEffect(() => {
@@ -51,21 +51,20 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                 .catch((error) => console.error("Error fetching all members:", error));
         }
     }, [isModalOpen]);
-
     // 멤버 추가 함수
-    const handleAddMember = () => {
+    const handleAddMember = (memberName: string) => {
         fetch("http://localhost:8081/nextodo/addmember", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ memberName: newMemberName, userId: userId })
+            body: JSON.stringify({ memberName: memberName, userId: userId })
         })
             .then((res) => res.json())
             .then((newMember) => {
                 setMembers([...members, newMember]);
-                setNewMemberName("");
+                setSearchMember("");
                 setIsModalOpen(false);
             })
-            .catch((error) => console.error("Error adding member:", error));
+            .catch((error) => console.error("멤버 추가 에러:", error));
     };
     return (
         <aside className="w-1/5 bg-gray-100 p-4 shadow-md">
@@ -130,7 +129,8 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
                                     setSelectedMember(member.memberName);
                                 }}
                             >
-                                <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
+                                <div
+                                    className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold">
                                     {member.memberName ? member.memberName.charAt(0).toUpperCase() : ""}
                                 </div>
                                 <span>{member.memberName}</span>
@@ -142,38 +142,53 @@ const Sidebar = ({setSelectedView, setSelectedMember, userId} : SidebarProps) =>
             {/* 모달 */}
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white w-1/3 p-6 rounded-lg shadow-lg relative">
+                    <div className="bg-white w-1/3 p-8 rounded-lg shadow-lg relative">
                         <button
-                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl"
                             onClick={() => setIsModalOpen(false)}
                         >
                             &times;
                         </button>
-                        <h2 className="text-xl font-bold mb-4">멤버 추가하기</h2>
+                        <h2 className="text-2xl font-bold mb-6 text-center">멤버 추가하기</h2>
                         <input
                             type="text"
-                            value={newMemberName}
-                            onChange={(e) => setNewMemberName(e.target.value)}
-                            placeholder="멤버 이름"
-                            className="w-full p-2 border rounded-md mb-4"
+                            value={searchMember}
+                            onChange={(e) => setSearchMember(e.target.value)}
+                            placeholder="멤버 이름을 입력하세요"
+                            className="w-full p-3 border border-gray-300 rounded-md mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
                             list="member-options"
                         />
-                        <div id="member-options">
-                            {allMembers.map((member) => (
-                                <div key={member.userId}>
-                                    name: {member.userName} email:({member.userEmail})
-                                </div>
-                            ))}
+                        <div id="member-options" className="max-h-40 overflow-y-auto border border-gray-200 rounded-md p-2 mb-4">
+                            {allMembers.length > 0 ? (
+                                <ul className="space-y-2">
+                                    {allMembers
+                                        .filter(member => member.userName.toLowerCase().includes(searchMember.toLowerCase()))
+                                        .map((member) => (
+                                            <li
+                                                key={member.userId}
+                                                className="flex justify-between p-2 bg-gray-50 rounded-md hover:bg-gray-100 cursor-pointer"
+                                                onClick={() => handleAddMember(member.userName)}
+                                            >
+                                                <div className="font-medium text-gray-800">{member.userName}</div>
+                                                <div className="text-gray-500 text-sm w-40">{member.userEmail}</div>
+                                            </li>
+                                        ))}
+                                </ul>
+                            ) : (
+                                <p className="text-center text-gray-500">회원 목록이 없습니다.</p>
+                            )}
                         </div>
                         <button
-                            className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            onClick={handleAddMember}
+                            className="w-full mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+                            onClick={() => setIsModalOpen(false)}
                         >
-                            추가하기
+                            닫기
                         </button>
                     </div>
                 </div>
             )}
+
+
         </aside>
     );
 };
