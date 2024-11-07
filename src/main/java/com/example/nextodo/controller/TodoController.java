@@ -23,7 +23,6 @@ public class TodoController {
         log.info("todoDTO : " + todoDTO);
         try {
             TodoDTO addTodoResult = todoService.addTodo(todoDTO);
-//            session.setAttribute("loginEmail", addTodoResult.getTodoId());??????????????????????????????
             log.info("일정추가 성공");
             return ResponseEntity.ok(addTodoResult);//성공적으로 추가된 TodoDTO 반환
         }catch (RuntimeException e) {
@@ -63,9 +62,6 @@ public class TodoController {
         log.info("선택한 멤버 : " + memberName);
         try{
             List<TodoDTO> membersTodoList = todoService.getMemberTodo(memberName);
-//            if(membersTodoList.isEmpty()) {//멤버의 투두가 비어있을 경우
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자에 대한 Todo가 없습니다.");
-//            }
             return ResponseEntity.ok(membersTodoList);
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("할 일 불러오기 실패: " + e.getMessage());//조회 실패

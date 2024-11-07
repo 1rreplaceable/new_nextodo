@@ -1,13 +1,11 @@
 package com.example.nextodo.service;
 
-import com.example.nextodo.dto.MemberDTO;
 import com.example.nextodo.dto.UserDTO;
 import com.example.nextodo.entity.Users;
 import com.example.nextodo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,11 +40,11 @@ public class UserService {
         }//if-else end
     }//login end
 
-    public List<UserDTO> getAllUsers(Long userId){
+    public List<UserDTO> getAllUsers(Long userId){//그룹 멤버 추가 시 전체 사용자 불러오기
         List<Users> users = userRepository.findAll();
         return users.stream()
                 .filter(user -> !user.getUserId().equals(userId)) // 현재 userId와 일치하지 않는 사용자만 필터링
-                .map(UserDTO::toUserDTO) // 필터링된 Users 객체를 UserDTO로 변환
+                .map(UserDTO::toUserDTO) //필터링된 Users 객체를 UserDTO로 변환. map()은 각 요소에 대해 변환 함수를 적용하여, 변환된 결과로 새로운 스트림을 반환한다.
                 .collect(Collectors.toList());
     }//getAllUsers end
 
