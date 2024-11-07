@@ -1,5 +1,6 @@
 package com.example.nextodo.entity;
 
+import com.example.nextodo.dto.CommentDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,12 @@ public class Comments {
 
     @ManyToOne
     @JoinColumn(name = "todo_id")
-    private Todo todoId;
+    private Todo todo;
 
+    public static Comments toCommentsEntity(CommentDTO commentDTO) {
+        Comments comments = new Comments();
+        comments.text = commentDTO.getText();
+        comments.writer = commentDTO.getWriter();
+        return comments;
+    }
 }

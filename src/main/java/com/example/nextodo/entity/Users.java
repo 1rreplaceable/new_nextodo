@@ -22,7 +22,7 @@ public class Users {
     @Column
     private String userPassword;
 
-    @Column
+    @Column(unique = true)
     private String userName;
     
     public static Users toUserEntity(UserDTO userDTO){

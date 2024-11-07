@@ -23,8 +23,7 @@ public class TodoController {
         log.info("todoDTO : " + todoDTO);
         try {
             TodoDTO addTodoResult = todoService.addTodo(todoDTO);
-            log.info("addTodoResult = " + addTodoResult);
-            session.setAttribute("loginEmail", addTodoResult.getTodoId());
+//            session.setAttribute("loginEmail", addTodoResult.getTodoId());??????????????????????????????
             log.info("일정추가 성공");
             return ResponseEntity.ok(addTodoResult);//성공적으로 추가된 TodoDTO 반환
         }catch (RuntimeException e) {
@@ -33,8 +32,7 @@ public class TodoController {
         }//trt-catch end
     }//addTodo end
 
-    @GetMapping("nextodo/getalltodo")//전체 투두 가져오기
-    //orderby endDate 내림차순
+    @GetMapping("nextodo/getalltodo")//전체 투두 조회
     public ResponseEntity<?> getAllTodo(@RequestParam Long userId){
         log.info("GetAllTodo userId : " + userId);
         try{//사용자 ID로 Todo목록을 가져옴
@@ -60,14 +58,14 @@ public class TodoController {
         }//try-catch end
     }//completeTodo end
 
-    @GetMapping("nextodo/getmemberstodo")
+    @GetMapping("nextodo/getmemberstodo")//선택한 멤버의 투두 조회
     public ResponseEntity<?> getMemberTodo(@RequestParam String memberName){
         log.info("선택한 멤버 : " + memberName);
         try{
             List<TodoDTO> membersTodoList = todoService.getMemberTodo(memberName);
-            if(membersTodoList.isEmpty()) {//멤버의 투두가 비어있을 경우
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자에 대한 Todo가 없습니다.");
-            }
+//            if(membersTodoList.isEmpty()) {//멤버의 투두가 비어있을 경우
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자에 대한 Todo가 없습니다.");
+//            }
             return ResponseEntity.ok(membersTodoList);
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("할 일 불러오기 실패: " + e.getMessage());//조회 실패
