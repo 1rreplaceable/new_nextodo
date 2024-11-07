@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor  // 이 어노테이션을 추가하면 모든 필드를 받는 생성자가 생성됩니다.
 @ToString
 public class UserDTO {
     private Long userId;

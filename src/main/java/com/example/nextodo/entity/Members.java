@@ -1,6 +1,7 @@
 package com.example.nextodo.entity;
 
 import com.example.nextodo.dto.MemberDTO;
+import com.example.nextodo.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -38,13 +38,13 @@ public class MemberController {
     }//addMembers end
 
     @GetMapping("nextodo/getmembers")//내 친구 목록 가져오기
-    public ResponseEntity<List<String>> getMembers(@RequestParam Long userId){
+    public ResponseEntity<List<MemberDTO>> getMembers(@RequestParam Long userId){
         log.info("내 친구목록 가져오기 메서드");
         log.info("현재 사용자 : {}", userId);
         try{
-            List<String> friendNames = memberService.getMembers(userId);
-            log.info("Members : " + friendNames);
-            return ResponseEntity.ok(friendNames);
+            List<MemberDTO> friendList = memberService.getMembers(userId);
+            log.info("Members : " + friendList);
+            return ResponseEntity.ok(friendList);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
         }//try-catch end

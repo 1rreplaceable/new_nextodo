@@ -32,10 +32,17 @@ public class MemberService {
         return memberDTO;
     }//addMember end
 
-    public List<String> getMembers(Long userId){
+    public List<MemberDTO> getMembers(Long userId){
         log.info("MemberService.getMembers & userId: " + userId);
         List<Members> members = memberRepository.findByUserUserId(userId);
-        return members.stream().map(Members::getMemberName).collect(Collectors.toList());//리스트로 변환?
+
+        // Members 엔티티를 MemberDTO로 변환하여 반환
+        return members.stream()
+                .map(member -> new MemberDTO(
+                        member.getMemberId(),
+                        member.getMemberName()
+                ))
+                .collect(Collectors.toList());
     }//getMembers
 
 }//class end
