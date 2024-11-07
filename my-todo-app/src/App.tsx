@@ -40,6 +40,7 @@ const App: React.FC = () => {
         setUserId(0);
         sessionStorage.removeItem("userId");
         sessionStorage.removeItem("userName");
+        setSelectedView("Today");
     };
     return (
         <div className="flex flex-col h-screen">
